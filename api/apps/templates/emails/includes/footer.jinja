@@ -1,0 +1,31 @@
+<!-- BEGIN FOOTER // -->
+<table border="0" cellpadding="0" cellspacing="0" class="footerContent"
+width="100%" id="templateFooter">
+    <tr>
+        <td valign="top">
+            {% block footer %}
+                {% trans unsubscribe_url=resolve_terminal_url("settings-mail-notifications") %}
+                <a href="{{ unsubscribe_url }}">Configure email notifications or unsubscribe</a>
+                &nbsp;&bull;&nbsp;
+                <a href="mailto:support@realjournals.com" >Contact us</a>
+                {% endtrans %}
+            {% endblock %}
+        </td>
+        {% block social %}
+            <td valign="top" class="social-links">
+                <a href="https://twitter.com/realjournals" title="{{ _("Follow us on Twitter") }}" style="color: #9dce0a"><img src="{{ static
+                ("emails/logo-twitter.png") }}" /></a>
+                <a href="https://telegram.com/realjournals" title="{{ _("Follow us on Telegram") }}" style="color: #9dce0a"><img src="{{ static
+                ("emails/logo-telegram.png") }}" /></a>
+                <a href="https://discord.com/realjournals" title="{{ _("Follow us on Discord") }}" style="color: #9dce0a"><img src="{{ static
+                ("emails/logo-dicord.png") }}" /></a>
+                <a href="https://instagram.com/realjournals" title="{{ _("Follow us on Instagram") }}" style="color: #9dce0a"><img src="{{ static
+                ("emails/logo-instagram.png") }}" /></a>
+                <a href="https://realjournals.com" title="{{ _
+                ("Visit our website") }}"><img src="{{ static
+                ("emails/logo-web.png") }}" /></a>
+            </td>
+        {% endblock %}
+    </tr>
+</table>
+<!-- // END FOOTER -->

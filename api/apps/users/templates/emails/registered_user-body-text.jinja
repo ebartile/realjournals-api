@@ -1,0 +1,20 @@
+{% trans %}
+Thank you for registering with Real Journals
+
+We're thrilled you've joined our growing community of professionals revolutionizing their way of working and hope you enjoy it.
+{% endtrans %}
+
+{% if not user.verified_email %}
+{% trans url=resolve_account_url("verify-email", user.email_token) %}
+Please confirm your email: {{ url }}
+{% endtrans %}
+{% endif %}
+
+{% trans %}
+Have a question? Give us a nudge if you ever need a helping hand, we're at support@realjournals.com.
+--
+{% endtrans %}
+
+{% trans url=resolve_account_url('cancel-account', cancel_token) %}
+You may remove your account from this service: {{ url }}
+{% endtrans %}

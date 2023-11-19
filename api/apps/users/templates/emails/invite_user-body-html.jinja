@@ -1,0 +1,30 @@
+{% extends "emails/hero-body-html.jinja" %}
+
+{% block body %}
+<table border="0" width="100%" cellpadding="0" cellspacing="0" class="table-body">
+    <tr>
+        <td>
+        {% if not user.verified_email %}
+            {% trans url=resolve_account_url('change-password', user.token) %}
+            <p>Please confirm your email and set password</p>
+            <a class="button" href="{{ url }}" title="Set Password">Set Password</a>
+            {% endtrans %}
+        {% endif %}
+        {% trans registered_by=user.registered_by.get_full_name() %}
+            <h2>You have been invited by <b>{{ registered_by }}</b> to Real Journals</h2>
+            <p>We're thrilled you've joined our growing community of professionals revolutionizing their way of working and hope you enjoy it.</p>
+            <p>Have a question? Give us a nudge if you ever need a helping hand, we're at support@realjournals.com.</p>
+        </td>
+        {% endtrans %}
+    </tr>
+</table>
+{% endblock %}
+
+{% block footer %}
+    {{ super() }}
+    <br />
+    <br />
+    {% trans url=resolve_account_url('cancel-account', cancel_token) %}
+    <strong>You may remove your account from this service</strong> <a href="{{ url }}" title="Remove your account" style="color: #9dce0a">clicking here</a>
+    {% endtrans %}
+{% endblock %}

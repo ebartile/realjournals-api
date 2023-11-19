@@ -1,0 +1,11 @@
+{% trans user=user.get_full_name(), changer=changer.get_full_name(), account=account.name, ref=snapshot.ref, subject=snapshot.subject, url=resolve_terminal_url("journal", account.slug, snapshot.ref) %}
+New journal created on {{ account }}
+
+Hello {{ user }}, {{ changer }} has created a new journal:
+
+#{{ ref }} {{ subject }}
+
+See journal at {{ url }}
+
+---
+{% endtrans %}

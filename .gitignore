@@ -1,0 +1,17 @@
+.*.sw*
+.#*
+*.log
+*.sqlite
+*.pyc
+*.mo
+.venv
+.coverage
+.cache
+.\#*
+.project
+.idea
+.env
+.envrc
+.direnv
+celerybeat-schedule
+*/media/*

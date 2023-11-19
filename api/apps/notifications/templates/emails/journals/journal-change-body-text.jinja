@@ -1,0 +1,12 @@
+{% extends "emails/updates-body-text.jinja" %}
+{% block head %}
+{% trans user=user.get_full_name(), changer=changer.get_full_name(), account=account.name, ref=snapshot.ref, subject=snapshot.subject, url=resolve_terminal_url("journal", account.slug, snapshot.ref) %}
+Journal updated on {{ account }}
+
+Hello {{ user }}, {{ changer }} has updated an journal:
+
+#{{ ref }} {{ subject }}
+
+See journal at {{ url }}
+{% endtrans %}
+{% endblock %}

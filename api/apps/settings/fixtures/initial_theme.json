@@ -1,0 +1,12 @@
+[
+    {
+        "model": "settings.themesettings",
+        "pk": 1,
+        "fields": {
+            "mode": "light",
+            "direction": "ltr",
+            "color": "default",
+            "stretch": false
+        }
+    }
+]

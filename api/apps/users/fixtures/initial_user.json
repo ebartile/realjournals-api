@@ -1,0 +1,43 @@
+[
+    {
+        "model": "users.user",
+        "pk": 1,
+        "fields": {
+            "username": "admin",
+            "email": "admin@realjournals.com",
+            "first_name": "Admin",
+            "last_name": "User",
+            "is_active": true,
+            "verified_email": true,
+            "accepted_terms": true,
+            "read_new_terms": true,
+            "is_superuser": true,
+            "is_staff": true,
+            "password": "pbkdf2_sha256$10000$oRIbCKOL1U3w$/gaYMnOlc/GnN4mn3UUXvXpk2Hx0vvht6Uqhu46aikI=",
+            "date_of_birth": "1997-09-01T13:48:21.711Z",
+            "updated_at": "2023-09-01T13:48:21.711Z",
+            "date_joined": "2023-09-01T13:48:21.711Z"
+        }
+    },
+    {
+        "model": "users.user",
+        "pk": 2,
+        "fields": {
+            "username": "ebartile",
+            "email": "ebartile@gmail.com",
+            "first_name": "Emmanuel",
+            "last_name": "Bartile",
+            "is_active": true,
+            "verified_email": true,
+            "accepted_terms": true,
+            "read_new_terms": true,
+            "is_superuser": false,
+            "is_staff": false,
+            "is_system": true,
+            "password": "pbkdf2_sha256$10000$oRIbCKOL1U3w$/gaYMnOlc/GnN4mn3UUXvXpk2Hx0vvht6Uqhu46aikI=",
+            "date_of_birth": "1997-09-01T13:48:21.711Z",
+            "updated_at": "2023-09-01T13:48:21.711Z",
+            "date_joined": "2023-09-01T13:48:21.711Z"
+        }
+    }
+]

@@ -1,0 +1,10 @@
+{% extends "emails/base-body-html.jinja" %}
+
+{% block body %}
+    {% trans user=user.get_full_name(), changer=changer.get_full_name(), account=account.name, ref=snapshot.ref, subject=snapshot.subject, url=resolve_terminal_url("journal", account.slug, snapshot.ref) %}
+    <h1>New journal created on {{ account }}</h1>
+    <p>Hello {{ user }},<br />{{ changer }} has created a new journal:</p>
+    <p><strong>#{{ ref }} {{ subject }}</strong></p>
+    <a class="button" href="{{ url }}" title="See Journal #{{ ref }} {{ subject }}">See journal</a>
+    {% endtrans %}
+{% endblock %}
