@@ -1,5 +1,23 @@
 version: '3'
 services:
+    mt5:
+        build:
+            context: ./docker/mt5
+            dockerfile: Dockerfile
+        restart: unless-stopped
+        environment:
+            VNC_USER: ${VNC_USER:-root}
+            VNC_PW: ${VNC_PW:-password}            
+        volumes:
+            - ./docker/mt5/data-src/.wine/drive_c/Program Files/MetaTrader 5/:/home/kasm-user/.wine/drive_c/Program Files/MetaTrader 5
+            - ./docker/mt5/data-src/Desktop/:/home/kasm-user/Desktop
+        networks:
+            - realjournals
+        ports:
+            - "6901:6901"
+            - "4901:4901"
+            - "18812:18812"
+
     api:
         build:
             context: ./docker/api
@@ -23,6 +41,7 @@ services:
             - postgres
             - rabbitmq
             - redis
+            - mt5
 
     redis:
         build:
@@ -57,6 +76,15 @@ services:
         networks:
             - realjournals
 
+    mongo:
+        image: mongo:latest
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: '${DB_USER}'
+            MONGO_INITDB_ROOT_PASSWORD: '${DB_PASSWORD}'
+            MONGO_INITDB_DATABASE: '${DB_NAME}'
+        networks:
+            - realjournals
+
     nginx:
         build:
             context: ./docker/nginx
@@ -72,7 +100,6 @@ services:
             - '${NGINX_HTTP_PORT:-80}:${NGINX_HTTP_PORT:-80}'
             - '${NGINX_HTTPS_PORT:-443}:${NGINX_HTTPS_PORT:-443}'
         volumes:
-            - '.:/var/www/html'
             - '${HOME}/www/certbot:/var/www/certbot'
             - '${HOME}/lib/letsencrypt:/var/lib/letsencrypt'
             - '${HOME}/letsencrypt:/etc/letsencrypt'

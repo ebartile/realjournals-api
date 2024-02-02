@@ -7884,7 +7884,11 @@
             "supports_metatrader_5": false,
             "supports_file_import": true,
             "is_enabled": false,
-            "supports_auto_sync_import": true
+            "supports_auto_sync_import": true,
+            "auto_instructions": "",
+            "auto_video_link": "https://www.youtube.com/embed/5ebVe95qvR4",
+            "manual_instructions": "",
+            "manual_video_link": "https://www.youtube.com/embed/5ebVe95qvR4"
         }
     },
     {
@@ -7901,7 +7905,11 @@
             "supports_metatrader_5": true,
             "supports_file_import": true,
             "is_enabled": true,
-            "supports_auto_sync_import": true
+            "supports_auto_sync_import": true,
+            "auto_instructions": "",
+            "auto_video_link": "https://www.youtube.com/embed/5ebVe95qvR4",
+            "manual_instructions": "",
+            "manual_video_link": "https://www.youtube.com/embed/5ebVe95qvR4"
         }
     }
 ]

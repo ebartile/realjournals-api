@@ -3,10 +3,11 @@
         "model": "settings.themesettings",
         "pk": 1,
         "fields": {
-            "mode": "light",
+            "mode": "dark",
             "direction": "ltr",
-            "color": "default",
-            "stretch": false
+            "color": "orange",
+            "stretch": false,
+            "layout": "vertical"
         }
     }
 ]

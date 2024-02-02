@@ -4,7 +4,7 @@ import markdown
 
 from markdown.treeprocessors import Treeprocessor
 
-from apps.users.templatetags.functions import resolve_landing
+from apps.users.templatetags.functions import resolve_terminal
 
 
 class TargetBlankLinkExtension(markdown.Extension):
@@ -17,7 +17,7 @@ class TargetBlankLinkExtension(markdown.Extension):
 
 class TargetBlankLinksTreeprocessor(Treeprocessor):
     def run(self, root):
-        home_url = resolve_landing("home")
+        home_url = resolve_terminal("home")
         links = root.iter("a")
         for a in links:
             href = a.get("href", "")

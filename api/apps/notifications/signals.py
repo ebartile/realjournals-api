@@ -90,7 +90,7 @@ def on_members_added(sender, user, account, new_members, **kwargs):
 
 def on_mentions(sender, user, obj, mentions, **kwargs):
     content_type = ContentType.objects.get_for_model(obj)
-    valid_content_types = ['issue', 'task', 'userstory']
+    valid_content_types = ['task',]
     if content_type.model in valid_content_types:
         event_type = choices.WebNotificationType.mentioned
         data = {

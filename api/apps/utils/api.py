@@ -19,12 +19,10 @@ from apps.settings.models import ThemeSettings
 from .models import LogEntry
 from .serializers import LogEntrySerializer, LogEntryDataGridSerializer
 
-class MyJavaScriptView(TemplateView):
-    template_name = 'myscript.js'
-    content_type = 'application/javascript'
+class ConfigViewSet(viewsets.ViewSet):
+    permission_classes = (AllowAny,)
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+    def list(self, request, *args, **kwargs):
         recaptcha_enable = settings.RECAPTCHA_ENABLED
         recaptcha_sitekey = settings.RECAPTCHA_SITEKEY
         recaptcha_size = settings.RECAPTCHA_SIZE
@@ -35,28 +33,22 @@ class MyJavaScriptView(TemplateView):
         brand_terms_url = settings.BRAND_TERMS_URL
         brand_policy_url = settings.BRAND_POLICY_URL
 
-        auth_credential = settings.AUTH_CREDENTIAL
-
-        notification = self.request.session.get('notification', None)
         csrf_token = get_token(self.request)
         locales = [{"code": c, "name": n, "bidi": c in settings.LANGUAGES_BIDI} for c, n in settings.LANGUAGES]
-        if self.request.user.is_authenticated:
-            serializer = UserAdminSerializer(self.request.user)
-            user_data = dict(serializer.data)
-            user_data["auth_token"] = get_token_for_user(self.request.user, "authentication")
-            auth_token = user_data["auth_token"]
-        else:
-            user_data = []
-            auth_token = ""
 
         theme = ThemeSettings.objects.first()
 
         context = {
             'name': 'Real Journals',
-            "account": settings.ACCOUNT_HOST,
-            "terminal": settings.TERMINAL_HOST,
+            "terminal": settings.LANDING_HOST,
             "api": settings.API_HOST,
             'settings': {
+                'layout': theme.layout, 
+                'modules': {},
+                'windowSize': {
+                    'width': 1200,
+                    'height': 900
+                },
                 'recaptcha': {
                     'enable': recaptcha_enable,
                     'sitekey': recaptcha_sitekey,
@@ -67,7 +59,8 @@ class MyJavaScriptView(TemplateView):
                     'mode': theme.mode,
                     'direction': theme.direction,
                     'color': theme.color,
-                    'stretch': theme.stretch
+                    'stretch': theme.stretch,
+                    'layout': theme.layout
                 },
                 'brand': {
                     'faviconUrl': brand_favicon_url,
@@ -76,16 +69,11 @@ class MyJavaScriptView(TemplateView):
                     'termsUrl': brand_terms_url,
                     'policyUrl': brand_policy_url,
                 },
-            },
-            'auth': {
-                'credential': auth_credential,
-                'user': user_data
-            },
-            'auth_token': auth_token,
-            'notification': notification,
-            'csrfToken': csrf_token,
+                'crsf_token': csrf_token
+            }
         }
-        return {"data": json.dumps(context)}
+        
+        return Response(context)
 
 
 class LocalesSerializer(serializers.ModelSerializer):

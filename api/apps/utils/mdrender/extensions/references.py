@@ -32,8 +32,8 @@ class RealJournalsReferencesPattern(Pattern):
 
         subject = instance.content_object.subject
 
-        if instance.content_type.model == "journal":
-            html_classes = "reference journal"
+        if instance.content_type.model == "account":
+            html_classes = "reference account"
         else:
             return "#{}".format(obj_ref)
 

@@ -140,7 +140,7 @@ if [ $# -gt 0 ]; then
 	CERTBOT="docker run -it --rm -u $(id -u):$(id -g) \
 	-v ${HOME}/letsencrypt:/etc/letsencrypt \
 	-v ${HOME}/lib/letsencrypt:/var/lib/letsencrypt \
-	-v ${HOME}/log/letsencrypt:/var/log/letsencrypt \
+	-v ${HOME}/log/letsencrypt:/var/www/html/log/letsencrypt \
 	-v ${HOME}/www/certbot:/var/www/certbot \
 	certbot/certbot"
 

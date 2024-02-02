@@ -1,17 +1,5 @@
 from django.contrib import admin
-from .models import TerminalModule, TerminalPageModule, AdminModule, AdminPageModule, ThemeSettings, TerminalDimensions, AdminDimensions
-
-class TerminalModuleAdmin(admin.ModelAdmin):
-    list_display = ('name', 'is_active', )
-    list_filter = ('is_active',)
-    search_fields = ('name',)
-    list_editable = ('is_active', )
-
-class AdminModuleAdmin(admin.ModelAdmin):
-    list_display = ('name', 'is_active', )
-    list_filter = ('is_active',)
-    search_fields = ('name',)
-    list_editable = ('is_active', )
+from .models import TerminalPageModule, AdminPageModule, ThemeSettings, TerminalDimensions, AdminDimensions
 
 class TerminalDimensionsInline(admin.TabularInline):  # You can also use StackedInline for a different display style
     model = TerminalDimensions
@@ -40,6 +28,4 @@ class ThemeSettingsAdmin(admin.ModelAdmin):
     list_filter = ('mode', 'direction', 'color', 'stretch')
 
 # Register your models and their respective admin classes
-admin.site.register(AdminModule, AdminModuleAdmin)
-admin.site.register(TerminalModule, TerminalModuleAdmin)
 admin.site.register(ThemeSettings, ThemeSettingsAdmin)

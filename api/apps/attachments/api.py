@@ -14,7 +14,6 @@ from apps.accounts.permissions import HasAccountPerm
 from rest_framework.permissions import AllowAny
 from apps.accounts.models import Account
 from apps.notifications.mixins import WatchedResourceMixin
-from apps.history.mixins import HistoryResourceMixin
 
 from . import permissions
 from . import serializers
@@ -22,7 +21,7 @@ from . import models
 from . import filters
 
 
-class BaseAttachmentViewSet(HistoryResourceMixin, WatchedResourceMixin,
+class BaseAttachmentViewSet(WatchedResourceMixin,
                             ModelViewSet):
 
     model = models.Attachment
@@ -41,7 +40,7 @@ class BaseAttachmentViewSet(HistoryResourceMixin, WatchedResourceMixin,
         self.pre_conditions_blocked(obj)
 
         if self.get_content_type() is None:
-            raise WrongArguments(_("Object id journal doesn't exist"))
+            raise WrongArguments(_("Object id account doesn't exist"))
 
         file = self.request.FILES.get('attached_file', None)
 
@@ -61,7 +60,7 @@ class BaseAttachmentViewSet(HistoryResourceMixin, WatchedResourceMixin,
         self.pre_conditions_blocked(obj)
 
         if self.get_content_type() is None:
-            raise WrongArguments(_("Object id journal doesn't exist"))
+            raise WrongArguments(_("Object id account doesn't exist"))
 
         if obj.account_id != obj.content_object.account_id:
             raise WrongArguments(_("Account ID does not match between object and account"))
@@ -72,7 +71,6 @@ class BaseAttachmentViewSet(HistoryResourceMixin, WatchedResourceMixin,
     def perform_destroy(self, instance):
         try:
             self.pre_conditions_blocked(instance)
-            # self.persist_history_snapshot(instance, delete=True)
             instance.delete()
         except Blocked as e:
             raise Blocked({"detail": str(e)})
@@ -103,12 +101,10 @@ class AccountAttachmentsViewSet(BaseAttachmentViewSet):
 
     def get_permissions(self):
         if self.action == "create":
-            self.permission_classes = (IsAuthenticated(), HasAccountPerm('modify_account') | (permissions.CommentAttachmentPerm() & HasAccountPerm('comment_journal')),)
-        elif self.action == "list":
             self.permission_classes = (IsAuthenticated(), HasAccountPerm('modify_account'),)
-        elif self.action == "retrieve":
-            self.permission_classes = (IsAuthenticated(), HasAccountPerm('modify_account') | permissions.IsAttachmentOwnerPerm(),)
         elif self.action == "update" \
+            or self.action == "list" \
+            or self.action == "retrieve" \
             or self.action == "partial_update" \
             or self.action == "destroy":
             self.permission_classes = (IsAuthenticated(), HasAccountPerm('modify_account') | permissions.IsAttachmentOwnerPerm(),)
@@ -132,21 +128,3 @@ class AccountAttachmentsViewSet(BaseAttachmentViewSet):
             size = file.size,
             name = path.basename(file.name)
         )
-
-class JournalAttachmentViewSet(BaseAttachmentViewSet):
-    permission_classes = (IsAuthenticated,)
-    filter_backends = (filters.CanViewJournalAttachmentFilterBackend,)
-    content_type = "journals.journal"
-
-    def get_permissions(self):
-        if self.action == "create":
-            self.permission_classes = (HasAccountPerm('modify_journal') | (permissions.CommentAttachmentPerm() & HasAccountPerm('comment_journal')))
-        elif self.action == "list":
-            self.permission_classes = (HasAccountPerm('view_journal'))
-        elif self.action == "retrieve":
-            self.permission_classes = (HasAccountPerm('view_journal') | permissions.IsAttachmentOwnerPerm())
-        elif self.action == "update" \
-            or self.action == "partial_update" \
-            or self.action == "destroy":
-            self.permission_classes = (HasAccountPerm('modify_journal') | permissions.IsAttachmentOwnerPerm())
-        return super().get_permissions()

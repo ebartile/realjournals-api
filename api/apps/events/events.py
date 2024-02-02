@@ -84,43 +84,6 @@ def emit_event_for_user_notification(user_id,
     )
 
 
-def emit_live_notification_for_model(obj, user, history, *, type:str="change", channel:str="events",
-                                     sessionid:str="not-existing"):
-    """
-    Sends a model live notification to users.
-    """
-
-    if obj._importing:
-        return None
-
-    content_type = get_typename_for_model_instance(obj)
-    if content_type == "journals.journal":
-        if history.type == HistoryType.create:
-            title = _("Journal created")
-            url = resolve_terminal("journal", obj.account.slug, obj.ref)
-        elif history.type == HistoryType.change:
-            title = _("Journal changed")
-            url = resolve_terminal("journal", obj.account.slug, obj.ref)
-        else:
-            title = _("Journal deleted")
-            url = None
-        body = _("Journal: #{} - {}").format(obj.ref, obj.subject)
-    else:
-        return None
-
-    return emit_event(
-        {
-            "title": title,
-            "body": "Account: {}\n{}".format(obj.account.name, body),
-            "url": url,
-            "timeout": 10000,
-            "id": history.id
-        },
-        "live_notifications.{}".format(user.id),
-        sessionid=sessionid
-    )
-
-
 def emit_event_for_ids(ids, content_type:str, accountid:int, *,
                        type:str="change", channel:str="events", sessionid:str=None):
     assert type in set(["create", "change", "delete"])

@@ -35,7 +35,7 @@ class Token(BaseAuthentication):
     in the token.
     """
 
-    auth_rx = re.compile(r"^Bearer (.+)$")
+    auth_rx = re.compile(r"^BearerToken (.+)$")
 
     def authenticate(self, request):
         if "HTTP_AUTHORIZATION" not in request.META:
@@ -67,4 +67,4 @@ class Token(BaseAuthentication):
         return (user, token)
 
     def authenticate_header(self, request):
-        return 'Bearer realm="api"'
+        return 'BearerToken realm="api"'

@@ -7,36 +7,16 @@ from django.utils.translation import gettext_lazy as _
 from django.core import validators
 from apps.utils.files import get_file_path
 from django.utils import timezone
-from apps.journals.choices import BLOCKED_BY_OWNER_LEAVING
 from .tokens import get_token_for_user
-from pytz import all_timezones
-import pycountry
 from django.contrib.postgres.fields import ArrayField
 from apps.utils.slug import slugify_uniquely
-from apps.journals.choices import BLOCKED_BY_OWNER_LEAVING
+from apps.accounts.choices import BLOCKED_BY_OWNER_LEAVING
 from django_otp.plugins.otp_totp.models import TOTPDevice
-from forex_python.converter import CurrencyCodes
-
-currency_codes = CurrencyCodes()
-TIMEZONE_CHOICES = [(tz, tz) for tz in all_timezones]
-COMMON_CURRENCY_CODES = ['USD', 'EUR', 'GBP', 'JPY', 'CAD', 'AUD', 'CHF', 'CNY', 'SEK', 'NZD', 'SGD', 'HKD', 'KRW', 'INR', 'BRL', 'MXN', 'ZAR', 'AED', 'TRY', 'RUB', 'NOK', 'DKK']
-CURRENCY_CHOICE = [(code, currency_codes.get_currency_name(code)) for code in COMMON_CURRENCY_CODES]
-ISO_CODE_CHOICES = tuple([(country.alpha_2, country.name) for country in pycountry.countries])
-CONTINENT_CHOICES = (
-    ('EU', 'Europe'),
-    ('NA', 'North America'),
-    ('SA', 'South America'),
-    ('AF', 'Africa'),
-    ('AS', 'Asia'),
-    ('OC', 'Oceania'),
-    ('AN', 'Antarctica')
-)
-
-PRESENCE_CHOICE = (
-    ('online', 'Online'),
-    ('away', 'Away'),
-    ('offline', 'Offline')
-)
+from apps.utils.time import timestamp_ms
+from apps.accounts import services as account_services
+from django_pglocks import advisory_lock
+import pycountry
+from .choices import *
 
 def get_default_uuid():
     return uuid.uuid4().hex
@@ -193,7 +173,7 @@ class User(AbstractBaseUser):
 
     def contacts_visible_by_user(self, user):
         qs = User.objects.filter(is_active=True)
-        account_ids = services.get_visible_account_ids(self, user)
+        account_ids = account_services.get_visible_account_ids(self, user)
         qs = qs.filter(memberships__account_id__in=account_ids)
         qs = qs.exclude(id=self.id)
         return qs
@@ -220,28 +200,13 @@ class User(AbstractBaseUser):
 
 MEMBERS_PERMISSIONS = [
     ('view_account', _('View account')),
-    # journal permissions
-    ('view_journal', _('View journal')),
-    ('add_journal', _('Add journal')),
-    ('modify_journal', _('Modify journal')),
-    ('comment_journal', _('Comment journal')),
-    ('delete_journal', _('Delete journal')),
 ]
 
 class Role(models.Model):
-
-    account = models.ForeignKey(
-        "accounts.Account",
-        null=True,
-        blank=False,
-        related_name="roles",
-        verbose_name=_("account"),
-        on_delete=models.CASCADE,
-    )
     name = models.CharField(max_length=200, null=False, blank=False,
                             verbose_name=_("name"))
     slug = models.SlugField(max_length=250, null=False, blank=True,
-                            verbose_name=_("slug"))
+                            verbose_name=_("slug"), unique=True)
     permissions = ArrayField(models.TextField(null=False, blank=False, choices=MEMBERS_PERMISSIONS),
                              null=True, blank=True, default=list, verbose_name=_("permissions"))
     order = models.IntegerField(default=10, null=False, blank=False,
@@ -252,7 +217,6 @@ class Role(models.Model):
         verbose_name = "role"
         verbose_name_plural = "roles"
         ordering = ["order", "slug"]
-        unique_together = (("slug", "account"),)
 
     def __str__(self):
         return self.name

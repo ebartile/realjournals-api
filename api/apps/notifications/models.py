@@ -5,6 +5,7 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.contrib.contenttypes.fields import GenericForeignKey
 from .choices import NotifyLevel, NOTIFY_LEVEL_CHOICES
+from . import tasks
 
 class NotifyPolicy(models.Model):
     account = models.ForeignKey("accounts.Account", related_name="notify_policies", on_delete=models.CASCADE)

@@ -37,3 +37,9 @@ django-cors-headers
 geoip2
 forex-python
 jsonschema
+pandas
+matplotlib
+pandas_ta
+mongoengine
+stripe
+drf-social-oauth2

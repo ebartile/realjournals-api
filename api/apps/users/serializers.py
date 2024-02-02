@@ -14,18 +14,22 @@ class UserJoinStatsSerializer(serializers.Serializer):
             
 class UserSerializer(serializers.ModelSerializer):
     is_profile_complete = serializers.SerializerMethodField()
-    has_account = serializers.SerializerMethodField()
-    account_has_be_configured = serializers.SerializerMethodField()
     full_name_display = serializers.SerializerMethodField()
     big_photo = serializers.SerializerMethodField()
     country_name = serializers.SerializerMethodField()
     currency_name = serializers.SerializerMethodField()
     continent_name = serializers.SerializerMethodField()
+    account_setup = serializers.SerializerMethodField()
 
     class Meta:
         model = User
         exclude = ['password', 'email_verified_at', 'token', 'email_token', 'new_email',]
-        read_only_fields = ['id', 'uuid', 'username', 'email', 'is_active', 'is_superuser', 'is_staff', 'photo', 'last_login', 'last_seen', 'email_verified_at', 'date_joined', 'updated_at', 'has_account', 'account_has_be_configured', 'is_profile_complete','two_factor_enabled', 'verified_email', 'is_system', 'max_private_accounts', 'max_public_accounts', 'max_memberships_private_accounts', 'max_memberships_public_accounts', 'registered_by', 'location',]
+        read_only_fields = ['id', 'uuid', 'username', 'email', 'is_active', 'is_superuser', 'is_staff', 'photo', 'last_login', 'last_seen', 'email_verified_at', 'date_joined', 'updated_at', 'is_profile_complete','two_factor_enabled', 'verified_email', 'is_system', 'max_private_accounts', 'max_public_accounts', 'max_memberships_private_accounts', 'max_memberships_public_accounts', 'registered_by', 'location', 'account_setup']
+
+    def get_account_setup(self, obj):
+        if obj.owned_accounts.all().count() > 0:
+            return False
+        return True 
 
     def get_currency_name(self, obj):
         return obj.get_currency_name()
@@ -35,17 +39,6 @@ class UserSerializer(serializers.ModelSerializer):
 
     def get_continent_name(self, obj):
         return obj.get_continent_name()
-
-    def get_has_account(self, obj):
-        if obj.owned_accounts.all().count() > 0:
-            return True
-        return False 
-
-    def get_account_has_be_configured(self, obj):
-        if obj.owned_accounts.all().count() > 0:
-            if obj.owned_accounts.filter(has_be_configured=True).count() > 0:
-                return True
-        return False 
 
     def get_is_profile_complete(self, obj):
         if obj.first_name and obj.last_name and obj.country and obj.date_of_birth:
@@ -99,10 +92,14 @@ class LoginSerializer(serializers.Serializer):
 class UserBasicInfoSerializer(serializers.ModelSerializer):
     full_name_display = serializers.SerializerMethodField()
     big_photo = serializers.SerializerMethodField()
+    country_name = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ("id", "email", "username", "full_name_display", "photo", "big_photo", "is_active")
+        fields = ("id", "email", "username", "presence", "country", "country_name", "first_name", "last_name", "full_name_display", "photo", "big_photo", "is_active")
+
+    def get_country_name(self, obj):
+        return obj.get_country_name()
 
     def get_full_name_display(self, obj):
         return obj.get_full_name() if obj else ""
@@ -125,13 +122,9 @@ class CancelAccountSerializer(serializers.Serializer):
 
 
 class RoleSerializer(serializers.ModelSerializer):
-    members_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Role
-        fields = ("id", "name", "slug", "account", "order", "computable", "permissions", "members_count")
+        fields = ("id", "name", "slug", "order", "computable", "permissions", )
         read_only_fields = ("id", "slug", )
         i18n_fields = ("name",)
-
-    def get_members_count(self, obj):
-        return obj.memberships.count()

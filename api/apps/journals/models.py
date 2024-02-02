@@ -1,134 +1,100 @@
-from django.db import models
-from django.utils import timezone
-from django.utils.translation import gettext_lazy as _
-from django.conf import settings
-from django.contrib.contenttypes.fields import GenericRelation
+from mongoengine import Document, IntField, FloatField, StringField, BooleanField
 
-TEXT_TYPE = "text"
-MULTILINE_TYPE = "multiline"
-RICHTEXT_TYPE = "richtext"
-DATE_TYPE = "date"
-URL_TYPE = "url"
-DROPDOWN_TYPE = "dropdown"
-CHECKBOX_TYPE = "checkbox"
-NUMBER_TYPE = "number"
+class HistoryDeals(Document):
+    account = IntField()
+    ticket = IntField()
+    order = IntField()
+    time = IntField(default=0)
+    time_msc = IntField(default=0)
+    type = IntField()
+    entry = IntField()
+    magic = IntField()
+    position_id = IntField()
+    reason = IntField()
+    volume = FloatField()
+    price = FloatField()
+    commission = FloatField()
+    swap = FloatField()
+    profit = FloatField()
+    fee = FloatField()
+    sl = FloatField()
+    tp = FloatField()
+    symbol = StringField()
+    comment = StringField()
+    external_id = StringField()
 
-TYPES_CHOICES = (
-    (TEXT_TYPE, _("Text")),
-    (MULTILINE_TYPE, _("Multi-Line Text")),
-    (RICHTEXT_TYPE, _("Rich text")),
-    (DATE_TYPE, _("Date")),
-    (URL_TYPE, _("Url")),
-    (DROPDOWN_TYPE, _("Dropdown")),
-    (CHECKBOX_TYPE, _("Checkbox")),
-    (NUMBER_TYPE, _("Number")),
-)
+class Orders(Document):
+    account = IntField()
+    ticket = IntField()
+    time_setup = IntField(default=0)
+    time_setup_msc = IntField(default=0)
+    time_expiration = IntField(default=0)
+    time_done = IntField(default=0)
+    time_done_msc = IntField(default=0)
+    type = IntField()
+    type_time = IntField()
+    type_filling = IntField()
+    state = IntField()
+    magic = IntField()
+    position_id = IntField()
+    position_by_id = IntField()
+    reason = IntField()
+    volume_current = FloatField()
+    volume_initial = FloatField()
+    price_open = FloatField()
+    sl = FloatField()
+    tp = FloatField()
+    price_current = FloatField()
+    price_stoplimit = FloatField()
+    symbol = StringField()
+    comment = StringField()
+    external_id = StringField()
 
-class AbstractCustomAttribute(models.Model):
-    name = models.CharField(null=False, blank=False, max_length=64, verbose_name=_("name"))
-    description = models.TextField(null=False, blank=True, verbose_name=_("description"))
-    type = models.CharField(null=False, blank=False, max_length=16,
-                            choices=TYPES_CHOICES, default=TEXT_TYPE,
-                            verbose_name=_("type"))
-    order = models.BigIntegerField(null=False, blank=False, verbose_name=_("order"))
-    account = models.ForeignKey(
-        "accounts.Account",
-        null=False,
-        blank=False,
-        related_name="%(class)ss",
-        verbose_name=_("account"),
-        on_delete=models.CASCADE,
-    )
-    extra = models.JSONField(blank=True, default=None, null=True)
-    created_date = models.DateTimeField(null=False, blank=False, default=timezone.now,
-                                        verbose_name=_("created date"))
-    modified_date = models.DateTimeField(null=False, blank=False,
-                                         verbose_name=_("modified date"))
+class HistoryOrders(Document):
+    account = IntField()
+    ticket = IntField()
+    time_setup = IntField(default=0)
+    time_setup_msc = IntField(default=0)
+    time_expiration = IntField(default=0)
+    time_done = IntField(default=0)
+    time_done_msc = IntField(default=0)
+    type = IntField()
+    type_time = IntField()
+    type_filling = IntField()
+    state = IntField()
+    magic = IntField()
+    position_id = IntField()
+    position_by_id = IntField()
+    reason = IntField()
+    volume_current = FloatField()
+    volume_initial = FloatField()
+    price_open = FloatField()
+    sl = FloatField()
+    tp = FloatField()
+    price_current = FloatField()
+    price_stoplimit = FloatField()
+    symbol = StringField()
+    comment = StringField()
+    external_id = StringField()
 
-    class Meta:
-        abstract = True
-        ordering = ["account", "order", "name"]
-        unique_together = ("account", "name")
-
-    def __str__(self):
-        return self.name
-
-    def save(self, *args, **kwargs):
-        if not self.modified_date:
-            self.modified_date = timezone.now()
-
-        return super().save(*args, **kwargs)
-
-class JournalCustomAttribute(AbstractCustomAttribute):
-    class Meta(AbstractCustomAttribute.Meta):
-        verbose_name = "journal custom attribute"
-        verbose_name_plural = "journal custom attributes"
-
-######################################################
-#  Custom Attributes Values Models
-#######################################################
-
-class AbstractCustomAttributesValues(models.Model):
-    attributes_values = models.JSONField(null=False, blank=False, default=dict, verbose_name=_("values"))
-
-    class Meta:
-        abstract = True
-        ordering = ["id"]
-
-class JournalCustomAttributesValues(AbstractCustomAttributesValues):
-    journal = models.OneToOneField(
-        "journals.Journal",
-        null=False,
-        blank=False,
-        related_name="custom_attributes_values",
-        verbose_name=_("journal"),
-        on_delete=models.CASCADE,
-    )
-
-    class Meta(AbstractCustomAttributesValues.Meta):
-        verbose_name = "journal custom attributes values"
-        verbose_name_plural = "journal custom attributes values"
-        index_together = [("journal",)]
-
-    @property
-    def account(self):
-        # NOTE: This property simplifies checking permissions
-        return self.journal.account
-
-class Journal(models.Model):
-    owner = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        null=True,
-        blank=True,
-        default=None,
-        related_name="owned_journals",
-        verbose_name=_("owner"),
-        on_delete=models.SET_NULL,
-    )
-    account = models.ForeignKey(
-        "accounts.Account",
-        null=False,
-        blank=False,
-        related_name="journals",
-        verbose_name=_("account"),
-        on_delete=models.CASCADE,
-    )
-    description = models.TextField(blank=True, verbose_name=_("How did you feel during this trade?"))
-    created_date = models.DateTimeField(null=False, blank=False,
-                                        verbose_name=_("created date"),
-                                        default=timezone.now)
-    modified_date = models.DateTimeField(null=False, blank=False,
-                                         verbose_name=_("modified date"))
-    attachments = GenericRelation("attachments.Attachment")
-
-    class Meta:
-        verbose_name = "journal"
-        verbose_name_plural = "journals"
-        ordering = ["account", "-id"]
-
-    def save(self, *args, **kwargs):
-        if not self.modified_date:
-            self.modified_date = timezone.now()
-
-        return super().save(*args, **kwargs)
-
+class Positions(Document):
+    account = IntField()
+    ticket = IntField()
+    time = IntField(default=0)
+    time_msc = IntField(default=0)
+    time_update = IntField(default=0)
+    time_update_msc = IntField(default=0)
+    type = IntField()
+    magic = FloatField()
+    identifier = IntField()
+    reason = IntField()
+    volume = FloatField()
+    price_open = FloatField()
+    sl = FloatField()
+    tp = FloatField()
+    price_current = FloatField()
+    swap = FloatField()
+    profit = FloatField()
+    symbol = StringField()
+    comment = StringField()
+    external_id = StringField()

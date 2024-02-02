@@ -1,11 +1,16 @@
+from apps.utils.mails import mail_builder
 from django.core.exceptions import ObjectDoesNotExist
 from django.apps import apps
 from django.conf import settings
 from apps.utils.thumbnails import get_thumbnail_url
-from .choices import ADMINS_PERMISSIONS, MEMBERS_PERMISSIONS, ANON_PERMISSIONS
+from .choices import ADMINS_PERMISSIONS, MEMBERS_PERMISSIONS, ANON_PERMISSIONS, BLOCKED_BY_DELETING
 from django.db.models import Q
 from . import models
 from contextlib import suppress
+from apps.utils.exceptions import BadRequest
+from django.utils.translation import gettext_lazy as _
+from realjournals.celery import app
+from apps.accounts import tasks
 
 def get_visible_account_ids(from_user, by_user):
     """Calculate the account_ids from one user visible by another"""
@@ -374,3 +379,85 @@ def apply_order_updates(base_orders: dict, new_orders: dict, *, remove_equal_ori
     if remove_equal_original:
         common_keys = base_orders.keys() & original_orders.keys()
         [base_orders.pop(id, None) for id in common_keys if original_orders[id] == base_orders[id]]
+
+def orphan_account(account):
+    account.memberships.filter(user=account.owner).delete()
+    account.owner = None
+    account.blocked_code = BLOCKED_BY_DELETING
+    account.save()
+
+
+@app.task
+def delete_account(account_id):
+    account = apps.get_model("accounts", "Account")
+    try:
+        account = models.Account.objects.get(id=account_id)
+    except models.Account.DoesNotExist:
+        return
+
+    account.delete_related_content()
+    account.delete()
+
+
+@app.task
+def delete_accounts(accounts):
+    for account in accounts:
+        delete_account(account.id)
+
+def check_if_account_can_have_more_memberships(account, total_new_memberships):
+    """Return if a account can have more n new memberships.
+
+    :param account: A account object.
+    :param total_new_memberships: the total of new memberships to add (int).
+
+    :return: {bool, error_mesage} return a tuple (can add new members?, error message).
+    """
+    if account.owner is None:
+        return False, _("Account without owner")
+
+    if account.is_private:
+        total_memberships = account.memberships.count() + total_new_memberships
+        max_memberships = account.owner.max_memberships_private_accounts
+        error_members_exceeded = _("You have reached your current limit of memberships for private accounts")
+    else:
+        total_memberships = account.memberships.count() + total_new_memberships
+        max_memberships = account.owner.max_memberships_public_accounts
+        error_members_exceeded = _("You have reached your current limit of memberships for public accounts")
+
+    if max_memberships is not None and total_memberships > max_memberships:
+        return False, error_members_exceeded
+
+    if account.memberships.filter(user=None).count() + total_new_memberships > settings.MAX_PENDING_MEMBERSHIPS:
+        error_pending_memberships_exceeded = _("You have reached the current limit of pending memberships")
+        return False, error_pending_memberships_exceeded
+
+    return True, None
+
+def send_invitation(invitation):
+    """Send an invitation email"""
+    if invitation.user:
+        template = mail_builder.membership_notification
+        email = template(invitation.user, {"membership": invitation})
+    else:
+        template = mail_builder.membership_invitation
+        email = template(invitation.email, {"membership": invitation})
+
+    email.send()
+
+def find_invited_user(email, default=None):
+    """Check if the invited user is already a registered.
+
+    :param invitation: Invitation object.
+    :param default: Default object to return if user is not found.
+
+    TODO: only used by importer/exporter and should be moved here
+
+    :return: The user if it's found, othwerwise return `default`.
+    """
+
+    User = apps.get_model(settings.AUTH_USER_MODEL)
+
+    try:
+        return User.objects.get(email=email)
+    except User.DoesNotExist:
+        return default

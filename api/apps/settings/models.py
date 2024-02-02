@@ -8,49 +8,37 @@ from django.contrib.postgres.fields import ArrayField
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import MaxValueValidator, MinValueValidator
 
-class TerminalModule(models.Model):
-    name = models.CharField(max_length=255, choices=TERMINAL_MODULES_CHOICES, unique=True)
-    is_active = models.BooleanField(default=True)
-
-    def __str__(self):
-        return self.name
-
-class AdminModule(models.Model):
-    name = models.CharField(max_length=255, choices=ADMIN_MODULES_CHOICES, unique=True)
-    is_active = models.BooleanField(default=True)
-
-    def __str__(self):
-        return self.name
-
 class TerminalPageModule(models.Model):
     account = models.ForeignKey("accounts.Account", null=True, related_name="account_pages", on_delete=models.CASCADE)
     page = models.CharField(max_length=255, choices=TERMINAL_PAGE_CHOICES, default="terminal.dashboard")
-    module = models.ForeignKey(TerminalModule, on_delete=models.CASCADE, related_name='terminal_module')
+    module = models.CharField(max_length=255, choices=TERMINAL_MODULES_CHOICES, default="net_profit_loss")
     status = models.BooleanField(default=True)
     order = models.IntegerField(default=0, null=False, blank=False, verbose_name=_("order"))
     created_at = models.DateTimeField(default=timezone.now, verbose_name=_("create at"))
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
+        unique_together = ("account", "page", "module")
         ordering = ('order',)
 
     def __str__(self):
-        return f"{self.page} - {self.module.name}"
+        return f"{self.page} - {self.module}"
 
 class AdminPageModule(models.Model):
     user = models.ForeignKey("users.User", null=True, related_name="user_admin_pages", on_delete=models.CASCADE)
     page = models.CharField(max_length=255, choices=ADMIN_PAGE_CHOICES, default="admin.dashboard")
-    module = models.ForeignKey(AdminModule, on_delete=models.CASCADE, related_name='admin_module')
+    module = models.CharField(max_length=255, choices=ADMIN_MODULES_CHOICES, default="latest_users")
     status = models.BooleanField(default=True)
     order = models.IntegerField(default=0, null=False, blank=False, verbose_name=_("order"))
     created_at = models.DateTimeField(default=timezone.now, verbose_name=_("create at"))
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
+        unique_together = ("user", "page", "module")
         ordering = ('order',)
 
     def __str__(self):
-        return f"{self.page} - {self.module.name}"
+        return f"{self.page} - {self.module}"
 
 class TerminalDimensions(models.Model):
     module = models.ForeignKey(TerminalPageModule, on_delete=models.CASCADE, related_name='dimensions')
@@ -106,10 +94,16 @@ class ThemeSettings(models.Model):
         ('red', 'Red'),
     )
 
+    LAYOUT_CHOICES = (
+        ('horizontal', 'Horizontal'),
+        ('vertical', 'Vertical'),
+    )
+
     mode = models.CharField(max_length=5, choices=MODE_CHOICES, default='light')
     direction = models.CharField(max_length=3, choices=DIRECTION_CHOICES, default='ltr')
     color = models.CharField(max_length=7, choices=COLOR_CHOICES, default='default')
     stretch = models.BooleanField(default=False)
+    layout = models.CharField(max_length=15, choices=LAYOUT_CHOICES, default='vertical')
 
     def __str__(self):
         return "Global Theme Settings"

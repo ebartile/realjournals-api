@@ -1,0 +1,23 @@
+{% if membership.invited_by %}
+    {% set sender_full_name=membership.invited_by.get_full_name() %}
+{% else %}
+    {% set sender_full_name=_("someone") %}
+{% endif %}
+{% trans full_name=sender_full_name, account=membership.account %}
+You, or someone you know, has invited you to Real Journals
+
+Hi! {{ full_name }} has sent you an invitation to join a account called {{ account }} in Real Journals.
+Real Jorunals is an Forex, Crypto, Stocks and Account Management Tool. There is no cost for you to be a Real Journal user.
+
+{% endtrans %}
+{% if membership.invitation_extra_text %}
+    {% trans extra=membership.invitation_extra_text %}
+And now a few words from the jolly good fellow or sistren who thought so kindly as to invite you:
+
+{{ extra }}
+    {% endtrans %}
+{% endif %}
+{{ _("Accept your invitation to Real Journal following this link:") }}
+{{ resolve_terminal_url("invitation", membership.token) }}
+
+---

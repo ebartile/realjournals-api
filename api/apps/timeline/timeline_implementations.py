@@ -13,18 +13,6 @@ def account_timeline(instance, extra_data={}):
     return result
 
 
-@register_timeline_implementation("journals.journal", "create")
-@register_timeline_implementation("journals.journal", "change")
-@register_timeline_implementation("journals.journal", "delete")
-def journal_timeline(instance, extra_data={}):
-    result = {
-        "journal": service.extract_journal_info(instance),
-        "account": service.extract_account_info(instance.account),
-    }
-    result.update(extra_data)
-    return result
-
-
 @register_timeline_implementation("accounts.membership", "create")
 @register_timeline_implementation("accounts.membership", "delete")
 def membership_timeline(instance, extra_data={}):

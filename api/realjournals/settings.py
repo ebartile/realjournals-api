@@ -10,14 +10,12 @@ SECRET_KEY = config('SECRET_KEY')
 APPEND_SLASH = False
 API_HOST = config('API_HOST') 
 ADMIN_HOST = config('ADMIN_HOST') 
-ACCOUNT_HOST = config('ACCOUNT_HOST') 
-TERMINAL_HOST = config('TERMINAL_HOST') 
 LANDING_HOST = config('LANDING_HOST') 
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', cast=bool) 
 
-ALLOWED_HOSTS = [API_HOST, ACCOUNT_HOST, ADMIN_HOST, TERMINAL_HOST, LANDING_HOST]
+ALLOWED_HOSTS = ['.realjournals.com',]
 
 ADMINS = (
     ("Emma", "ebartile@gmail.com"),
@@ -45,39 +43,33 @@ INSTALLED_APPS = [
     "django_filters",
     "drf_link_header_pagination",
     "social_django",
+    "channels",
     "django_otp",
     'django_otp.plugins.otp_static',
     'django_otp.plugins.otp_totp',
     'django_otp.plugins.otp_hotp',
     'django_otp.plugins.otp_email',
     'corsheaders',
-
+    'oauth2_provider',
+    
     # Custom apps
     "apps",
     "apps.users.apps.UsersConfig",
     "apps.events.apps.EventsAppConfig",
     "apps.feedback.apps.FeedbackConfig",
     "apps.stats.apps.StatsConfig",
-    "apps.telemetry.apps.TelemetryConfig",
-    "apps.journals.apps.JournalsConfig",
     "apps.accounts.apps.AccountsConfig",
     "apps.attachments.apps.AttachmentsConfig",
     "apps.notifications.apps.NotificationsAppConfig",
     "apps.settings.apps.SettingsConfig",
-    "apps.userstorage.apps.UserstorageConfig",
     "apps.timeline.apps.TimelineConfig",
-    "apps.history.apps.HistoryConfig",
-    "apps.references.apps.ReferencesConfig",
-    "apps.transactions.apps.TransactionsConfig",
     "apps.likes.apps.LikesConfig",
+    "apps.journals.apps.JournalsConfig",
     "apps.utils.apps.UtilsConfig",
-    "apps.testimonials.apps.TestimonialsConfig",
 ]
 
 MIDDLEWARE = [
     "apps.events.middleware.SessionIDMiddleware",
-
-    'corsheaders.middleware.CorsMiddleware',
      
     # Default
     'django.middleware.security.SecurityMiddleware',
@@ -87,6 +79,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'corsheaders.middleware.CorsMiddleware',
 
     # Added
     "django.middleware.locale.LocaleMiddleware",
@@ -161,10 +155,12 @@ DATABASES = {
         'PASSWORD': config('DB_PASSWORD'),
         'HOST': config('DB_HOST'),
         'PORT': config("DB_PORT"),
-    }
+    }    
 }
 
-
+DATABASE_ROUTERS = [
+    'realjournals.dbrouter.DatabaseRouter',  # Define your own database router if needed
+]
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
@@ -217,7 +213,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 FILE_UPLOAD_PERMISSIONS = 0o644
 
-LOGIN_URL = "https://account.realjournal.com/"
+LOGIN_URL = "https://realjournal.com/"
 
 # Languages we provide translations for, out of the box.
 LANGUAGES = [
@@ -326,13 +322,10 @@ SESSION_COOKIE_SAMESITE = 'Lax'
 
 CSRF_COOKIE_AGE = None
 CSRF_COOKIE_SECURE = True
-CSRF_TRUSTED_ORIGINS = [
-    "https://{}".format(API_HOST), 
-    "https://{}".format(ADMIN_HOST), 
-    "https://{}".format(ACCOUNT_HOST), 
-    "https://{}".format(TERMINAL_HOST),
-    "https://{}".format(LANDING_HOST)
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https://\w+\.realjournals\.com$",
 ]
+CSRF_TRUSTED_ORIGINS = ["https://*.realjournals.com", ]
 
 
 # MAIL OPTIONS
@@ -472,12 +465,17 @@ AUTH_USER_MODEL = "users.User"
 AUTHENTICATION_BACKENDS = (
     "django.contrib.auth.backends.ModelBackend",  # default
     'social_core.backends.google.GoogleOAuth2',
+    'drf_social_oauth2.backends.DjangoOAuth2',
     'social_core.backends.facebook.FacebookOAuth2',
     'social_core.backends.twitter.TwitterOAuth'
 )
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '884185272139-vlh8074gg07n3n5kigejkc0umb4dfvs9.apps.googleusercontent.com'
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
+    'https://www.googleapis.com/auth/userinfo.email',
+    'https://www.googleapis.com/auth/userinfo.profile',
+]
 
 SOCIAL_AUTH_FACEBOOK_KEY = "735660328403343"        # App ID
 SOCIAL_AUTH_FACEBOOK_SECRET = "5b56feb6ba3e55027c5b4a033707dab9"  # App Secret
@@ -509,6 +507,8 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
+        'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
+        'drf_social_oauth2.authentication.SocialAuthentication',        
         "apps.users.backends.Token"
         # TODO: add token auth
     ],
@@ -584,14 +584,6 @@ MAX_MEMBERSHIPS_PRIVATE_ACCOUNT = None  # None == no limit
 MAX_MEMBERSHIPS_PUBLIC_ACCOUNT = None  # None == no limit
 MAX_PENDING_MEMBERSHIPS = 30  # Max number of unconfirmed memberships in a accounts
 
-# TELEMETRY TODO
-ENABLE_TELEMETRY = False
-# RUDDER_WRITE_KEY = "1kmTTxJoSmaZNRpU1uORpyZ8mqv"
-# DATA_PLANE_URL = "https://telemetry./"
-
-# TODO: add redis port and host
-# TODO: add recaptcha
-
 RECAPTCHA_ENABLED = False
 RECAPTCHA_SITEKEY = "7d7d4dcf-db28-49c2-b97a-ea95d68332bc"
 RECAPTCHA_SIZE = "normal"
@@ -620,34 +612,65 @@ APP_EXTRA_EXPOSE_HEADERS = [
 
 SOCIAL_AUTH_JSONFIELD_ENABLED = True
 
-SOCIAL_AUTH_LOGIN_REDIRECT_URL = "https://{}".format(TERMINAL_HOST)
-WSGI_APPLICATION = 'realjournals.wsgi.application'
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = "https://realjournals.com/"
+# WSGI_APPLICATION = 'realjournals.wsgi.application'
 
 OTP_TOTP_ISSUER = "RealJournal"
 
 INTERNAL_IPS = []
 
-# Whitelist specific origins (comma-separated list)
-CORS_ALLOWED_ORIGINS = [
-    "https://{}".format(API_HOST), 
-    "https://{}".format(ADMIN_HOST), 
-    "https://{}".format(ACCOUNT_HOST), 
-    "https://{}".format(TERMINAL_HOST),
-    "https://{}".format(LANDING_HOST)    
-]
+CORS_ORIGIN_ALLOW_ALL = True
 
 CORS_ALLOW_CREDENTIALS = True
 
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https://\w+\.realjournals\.com$",
+    r"^https://realjournals\.com$",
+]
+
 CORS_ALLOW_HEADERS = [ "access-control-allow-origin",  
                         "access-control-allow-headers",
+                        "access-control-allow-credentials",
                         "content-type", "x-requested-with",
                         "authorization", "accept-encoding",
                         "x-disable-pagination", "x-lazy-pagination",
-                        "x-host", "x-session-id", "set-orders", "x-pagination-count", "x-paginated", "x-paginated-by",
-                       "x-pagination-current", "x-pagination-next", "x-pagination-prev",
+                        "x-host", "x-session-id", "set-orders", 
+                        "x-pagination-count", "x-paginated", 
+                        "x-paginated-by", "x-pagination-current", 
+                        "x-pagination-next", "x-pagination-prev",
                        "x-site-host", "x-site-register", "x-csrftoken"]
 
 CORS_ALLOW_METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"]
+
+DEFAULT_ACCOUNT_TEMPLATE = "default"
+
+MT5_HOST = config('MT5_HOST', default='mt5')
+MT5_PORT = config('MT5_PORT', default=18812)
+
+REDIS_HOST = config('MT5_HOST', default='redis')
+REDIS_PORT = config('MT5_PORT', default=6379)
+
+# Configure ASGI application
+ASGI_APPLICATION = "realjournals.asgi.application"
+
+# Example channel layer using Redis (change configuration as needed)
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [(REDIS_HOST, REDIS_PORT)],
+        },
+    },
+}
+
+import mongoengine
+
+mongoengine.connect(host="mongodb://{}:{}@mongo:27017/{}?authSource=admin".format(config('DB_USER'), config('DB_PASSWORD'), config('DB_NAME')))
+
+STRIPE_PUBLIC_KEY="pk_test_vRCAMZxLb98NcsTwQDBq1kfF00Xx3lwHCe"
+STRIPE_SECRET_KEY="sk_test_51FK3JrH2WJvWIwleaaMZzXjNV7VoE8i3SmFsAVgeJjJ8cKZkNXmpgEZ29RaUwZKO23VCzlTogr2VFCNzzXIQbUki00nYPGubXx"
+
+STRIPE_SECRET_WEBHOOK="whsec_4154f736d7f5d1b68f243d07eab1453f319fa92e8bdcd009cc18a76e98f2377b"
 
 # NOTE: DON'T INSERT ANYTHING AFTER THIS BLOCK
 if "test" in sys.argv:

@@ -10,9 +10,6 @@ class AttachmentAdmin(admin.ModelAdmin):
     search_fields = ["id", "attached_file", "account__name", "account__slug"]
     raw_id_fields = ["account"]
 
-    def get_object(self, *args, **kwargs):
-        self.obj = super().get_object(*args, **kwargs)
-        return self.obj
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name in ["owner"] and getattr(self, 'obj', None):

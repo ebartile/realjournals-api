@@ -1,0 +1,25 @@
+{% extends "emails/hero-body-html.jinja" %}
+
+{% if membership.invited_by %}
+    {% set sender_full_name=membership.invited_by.get_full_name() %}
+{% else %}
+    {% set sender_full_name=_("someone") %}
+{% endif %}
+
+
+{% block body %}
+    {% trans full_name=sender_full_name, account=membership.account %}
+    <h2>You have been invited to Real Journals!</h2>
+<p>Hi! {{ full_name }} has sent you an invitation to join account <em>{{ account }}</em> in Real Journals.</br> Real Jorunals is an Forex, Crypto, Stocks and Account Management Tool. There is no cost for you to be a Real Journal user. There is no cost for you to be a Real Journal user.</p>
+    {% endtrans %}
+
+    {% if membership.invitation_extra_text %}
+        {% trans extra=membership.invitation_extra_text|linebreaksbr %}
+    <p><small>And now a few words from the jolly good fellow or sistren<br/> who thought so kindly as to invite you</small></p>
+    <p><strong>{{ extra }}</strong></p>
+        {% endtrans %}
+    {% endif %}
+
+    <a class="button" href="{{ resolve_terminal_url("invitation", membership.token) }}"
+       title="{{ _("Accept your invitation to Real Journals") }}">{{ _("Accept your invitation") }}</a>
+{% endblock %}

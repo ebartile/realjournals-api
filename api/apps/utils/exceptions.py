@@ -210,8 +210,8 @@ def exception_handler(exc, context):
         return response.Response({"_error_message": str(exc)}, status=status.HTTP_403_FORBIDDEN)
 
     # Handle any other unhandled exceptions
-    return None
-    # return response.Response({'_error_message': "Internal Server Error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    # return None
+    return response.Response({'_error_message': str(exc)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 ValidationError = DjangoValidationError

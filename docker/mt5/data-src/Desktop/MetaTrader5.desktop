@@ -1,0 +1,14 @@
+[Desktop Entry]
+Version=1.0
+Name=MetaTrader5
+Comment=Trade on Forex
+Exec=wine "/home/kasm-user/.wine/drive_c/Program Files/MetaTrader 5/terminal64.exe"
+Icon=/home/kasm-user/.wine/drive_c/Program Files/MetaTrader 5/Terminal.ico
+Terminal=false
+StartupWMClass=MetaTrader5
+Type=Application
+Categories=Trading;
+Keywords=metatrader
+X-GNOME-UsesNotifications=true
+Path=/home/kasm-user/.wine/drive_c/Program Files/MetaTrader 5
+StartupNotify=false

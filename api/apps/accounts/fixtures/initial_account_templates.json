@@ -1,0 +1,1091 @@
+[
+{
+    "model": "accounts.accounttemplate",
+    "pk": 1,
+    "fields": {
+        "name": "Default",
+        "slug": "default",
+        "created_date": "2023-11-22T14:48:43.596Z",
+        "modified_date": "2023-11-22T14:48:43.596Z",
+        "default_owner_role": "account-owner",
+        "page_modules": [
+            {
+                "page": "terminal.dashboard",
+                "status": true,
+                "order": 0,
+                "module": "account_free_margin",
+                "dimensions": [
+                    {
+                        "breakpoint": "xs",
+                        "w": 6,
+                        "h": 3,
+                        "x": 6,
+                        "y": 11,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "sm",
+                        "w": 6,
+                        "h": 3,
+                        "x": 0,
+                        "y": 14,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "lg",
+                        "w": 3,
+                        "h": 3,
+                        "x": 0,
+                        "y": 0,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "md",
+                        "w": 3,
+                        "h": 3,
+                        "x": 0,
+                        "y": 4,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    }
+                ]
+            },
+            {
+                "page": "terminal.dashboard",
+                "status": true,
+                "order": 1,
+                "module": "account_profit",
+                "dimensions": [
+                    {
+                        "breakpoint": "xs",
+                        "w": 6,
+                        "h": 3,
+                        "x": 0,
+                        "y": 14,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "sm",
+                        "w": 6,
+                        "h": 3,
+                        "x": 6,
+                        "y": 14,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "lg",
+                        "w": 3,
+                        "h": 3,
+                        "x": 0,
+                        "y": 0,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "md",
+                        "w": 3,
+                        "h": 3,
+                        "x": 6,
+                        "y": 4,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    }
+                ]
+            },
+            {
+                "page": "terminal.dashboard",
+                "status": true,
+                "order": 1,
+                "module": "trade_win_percentage",
+                "dimensions": [
+                    {
+                        "breakpoint": "md",
+                        "w": 6,
+                        "h": 2,
+                        "x": 0,
+                        "y": 0,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "sm",
+                        "w": 12,
+                        "h": 2,
+                        "x": 0,
+                        "y": 0,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "xs",
+                        "w": 3,
+                        "h": 2,
+                        "x": 0,
+                        "y": 0,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "lg",
+                        "w": 3,
+                        "h": 2,
+                        "x": 3,
+                        "y": 0,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    }
+                ]
+            },
+            {
+                "page": "terminal.dashboard",
+                "status": true,
+                "order": 2,
+                "module": "profit_factor",
+                "dimensions": [
+                    {
+                        "breakpoint": "md",
+                        "w": 6,
+                        "h": 2,
+                        "x": 0,
+                        "y": 0,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "sm",
+                        "w": 2,
+                        "h": 2,
+                        "x": 0,
+                        "y": 0,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "xs",
+                        "w": 1,
+                        "h": 2,
+                        "x": 0,
+                        "y": 0,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "lg",
+                        "w": 6,
+                        "h": 2,
+                        "x": 6,
+                        "y": 0,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    }
+                ]
+            },
+            {
+                "page": "terminal.dashboard",
+                "status": true,
+                "order": 2,
+                "module": "account_leverage",
+                "dimensions": [
+                    {
+                        "breakpoint": "xs",
+                        "w": 6,
+                        "h": 3,
+                        "x": 6,
+                        "y": 14,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "md",
+                        "w": 3,
+                        "h": 3,
+                        "x": 9,
+                        "y": 4,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "lg",
+                        "w": 3,
+                        "h": 3,
+                        "x": 0,
+                        "y": 0,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "sm",
+                        "w": 6,
+                        "h": 3,
+                        "x": 6,
+                        "y": 11,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    }
+                ]
+            },
+            {
+                "page": "terminal.dashboard",
+                "status": true,
+                "order": 3,
+                "module": "account_margin",
+                "dimensions": [
+                    {
+                        "breakpoint": "xs",
+                        "w": 6,
+                        "h": 3,
+                        "x": 0,
+                        "y": 11,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "sm",
+                        "w": 6,
+                        "h": 3,
+                        "x": 0,
+                        "y": 11,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "md",
+                        "w": 3,
+                        "h": 3,
+                        "x": 3,
+                        "y": 4,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "lg",
+                        "w": 3,
+                        "h": 3,
+                        "x": 0,
+                        "y": 0,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    }
+                ]
+            },
+            {
+                "page": "terminal.dashboard",
+                "status": true,
+                "order": 3,
+                "module": "day_win_percentage",
+                "dimensions": [
+                    {
+                        "breakpoint": "md",
+                        "w": 6,
+                        "h": 2,
+                        "x": 0,
+                        "y": 0,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "sm",
+                        "w": 2,
+                        "h": 2,
+                        "x": 0,
+                        "y": 0,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "xs",
+                        "w": 1,
+                        "h": 2,
+                        "x": 0,
+                        "y": 0,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "lg",
+                        "w": 6,
+                        "h": 2,
+                        "x": 6,
+                        "y": 0,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    }
+                ]
+            },
+            {
+                "page": "terminal.dashboard",
+                "status": true,
+                "order": 4,
+                "module": "trade_allocation",
+                "dimensions": [
+                    {
+                        "breakpoint": "xs",
+                        "w": 12,
+                        "h": 7,
+                        "x": 0,
+                        "y": 25,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "sm",
+                        "w": 12,
+                        "h": 7,
+                        "x": 0,
+                        "y": 25,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "md",
+                        "w": 8,
+                        "h": 6,
+                        "x": 4,
+                        "y": 9,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "lg",
+                        "w": 8,
+                        "h": 6,
+                        "x": 0,
+                        "y": 7,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    }
+                ]
+            },
+            {
+                "page": "terminal.dashboard",
+                "status": true,
+                "order": 4,
+                "module": "average_win_loss_trade",
+                "dimensions": [
+                    {
+                        "breakpoint": "md",
+                        "w": 6,
+                        "h": 2,
+                        "x": 0,
+                        "y": 0,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "sm",
+                        "w": 2,
+                        "h": 2,
+                        "x": 0,
+                        "y": 0,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "xs",
+                        "w": 1,
+                        "h": 2,
+                        "x": 0,
+                        "y": 0,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "lg",
+                        "w": 6,
+                        "h": 2,
+                        "x": 6,
+                        "y": 0,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    }
+                ]
+            },
+            {
+                "page": "terminal.dashboard",
+                "status": true,
+                "order": 5,
+                "module": "total_trades",
+                "dimensions": [
+                    {
+                        "breakpoint": "xs",
+                        "w": 12,
+                        "h": 2,
+                        "x": 0,
+                        "y": 17,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "sm",
+                        "w": 12,
+                        "h": 2,
+                        "x": 0,
+                        "y": 17,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "md",
+                        "w": 4,
+                        "h": 2,
+                        "x": 4,
+                        "y": 7,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "lg",
+                        "w": 4,
+                        "h": 2,
+                        "x": 4,
+                        "y": 3,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    }
+                ]
+            },
+            {
+                "page": "terminal.dashboard",
+                "status": true,
+                "order": 5,
+                "module": "daily_net_cummulative_profit_loss",
+                "dimensions": [
+                    {
+                        "breakpoint": "md",
+                        "w": 6,
+                        "h": 2,
+                        "x": 0,
+                        "y": 0,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "sm",
+                        "w": 2,
+                        "h": 2,
+                        "x": 0,
+                        "y": 0,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "xs",
+                        "w": 1,
+                        "h": 2,
+                        "x": 0,
+                        "y": 0,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "lg",
+                        "w": 6,
+                        "h": 2,
+                        "x": 6,
+                        "y": 0,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    }
+                ]
+            },
+            {
+                "page": "terminal.dashboard",
+                "status": true,
+                "order": 6,
+                "module": "net_daily_profit_loss",
+                "dimensions": [
+                    {
+                        "breakpoint": "md",
+                        "w": 6,
+                        "h": 2,
+                        "x": 0,
+                        "y": 0,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "sm",
+                        "w": 2,
+                        "h": 2,
+                        "x": 0,
+                        "y": 0,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "xs",
+                        "w": 1,
+                        "h": 2,
+                        "x": 0,
+                        "y": 0,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "lg",
+                        "w": 6,
+                        "h": 2,
+                        "x": 6,
+                        "y": 0,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    }
+                ]
+            },
+            {
+                "page": "terminal.dashboard",
+                "status": true,
+                "order": 6,
+                "module": "welcome",
+                "dimensions": [
+                    {
+                        "breakpoint": "xs",
+                        "w": 12,
+                        "h": 7,
+                        "x": 0,
+                        "y": 0,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "sm",
+                        "w": 12,
+                        "h": 7,
+                        "x": 0,
+                        "y": 0,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "md",
+                        "w": 8,
+                        "h": 4,
+                        "x": 0,
+                        "y": 0,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "lg",
+                        "w": 8,
+                        "h": 4,
+                        "x": 0,
+                        "y": 0,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    }
+                ]
+            },
+            {
+                "page": "terminal.dashboard",
+                "status": true,
+                "order": 6,
+                "module": "calendar",
+                "dimensions": [
+                    {
+                        "breakpoint": "sm",
+                        "w": 12,
+                        "h": 7,
+                        "x": 0,
+                        "y": 24,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "md",
+                        "w": 8,
+                        "h": 7,
+                        "x": 4,
+                        "y": 5,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "xs",
+                        "w": 12,
+                        "h": 7,
+                        "x": 0,
+                        "y": 24,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "lg",
+                        "w": 8,
+                        "h": 7,
+                        "x": 0,
+                        "y": 9,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    }
+                ]
+            },
+            {
+                "page": "terminal.dashboard",
+                "status": true,
+                "order": 7,
+                "module": "net_profit_loss",
+                "dimensions": [
+                    {
+                        "breakpoint": "sm",
+                        "w": 12,
+                        "h": 4,
+                        "x": 0,
+                        "y": 21,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "lg",
+                        "w": 4,
+                        "h": 4,
+                        "x": 0,
+                        "y": 3,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "xs",
+                        "w": 12,
+                        "h": 4,
+                        "x": 0,
+                        "y": 21,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "md",
+                        "w": 4,
+                        "h": 4,
+                        "x": 0,
+                        "y": 9,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    }
+                ]
+            },
+            {
+                "page": "terminal.dashboard",
+                "status": true,
+                "order": 7,
+                "module": "recent_timeline",
+                "dimensions": [
+                    {
+                        "breakpoint": "md",
+                        "w": 6,
+                        "h": 2,
+                        "x": 0,
+                        "y": 0,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "sm",
+                        "w": 2,
+                        "h": 2,
+                        "x": 0,
+                        "y": 0,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "xs",
+                        "w": 1,
+                        "h": 2,
+                        "x": 0,
+                        "y": 0,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "lg",
+                        "w": 6,
+                        "h": 2,
+                        "x": 6,
+                        "y": 0,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    }
+                ]
+            },
+            {
+                "page": "terminal.dashboard",
+                "status": true,
+                "order": 8,
+                "module": "recent_trades",
+                "dimensions": [
+                    {
+                        "breakpoint": "md",
+                        "w": 6,
+                        "h": 2,
+                        "x": 0,
+                        "y": 0,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "sm",
+                        "w": 2,
+                        "h": 2,
+                        "x": 0,
+                        "y": 0,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "xs",
+                        "w": 1,
+                        "h": 2,
+                        "x": 0,
+                        "y": 0,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "lg",
+                        "w": 6,
+                        "h": 2,
+                        "x": 6,
+                        "y": 0,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    }
+                ]
+            },
+            {
+                "page": "terminal.dashboard",
+                "status": true,
+                "order": 8,
+                "module": "invite_member_card",
+                "dimensions": [
+                    {
+                        "breakpoint": "lg",
+                        "w": 4,
+                        "h": 5,
+                        "x": 8,
+                        "y": 7,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "xs",
+                        "w": 12,
+                        "h": 6,
+                        "x": 0,
+                        "y": 32,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "md",
+                        "w": 4,
+                        "h": 5,
+                        "x": 8,
+                        "y": 15,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "sm",
+                        "w": 12,
+                        "h": 6,
+                        "x": 0,
+                        "y": 32,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    }
+                ]
+            },
+            {
+                "page": "terminal.dashboard",
+                "status": true,
+                "order": 9,
+                "module": "winners",
+                "dimensions": [
+                    {
+                        "breakpoint": "xs",
+                        "w": 6,
+                        "h": 2,
+                        "x": 0,
+                        "y": 19,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "sm",
+                        "w": 6,
+                        "h": 2,
+                        "x": 0,
+                        "y": 19,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "md",
+                        "w": 4,
+                        "h": 2,
+                        "x": 0,
+                        "y": 7,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "lg",
+                        "w": 4,
+                        "h": 2,
+                        "x": 4,
+                        "y": 5,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    }
+                ]
+            },
+            {
+                "page": "terminal.dashboard",
+                "status": true,
+                "order": 10,
+                "module": "lossers",
+                "dimensions": [
+                    {
+                        "breakpoint": "xs",
+                        "w": 6,
+                        "h": 2,
+                        "x": 6,
+                        "y": 19,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "sm",
+                        "w": 6,
+                        "h": 2,
+                        "x": 6,
+                        "y": 19,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "md",
+                        "w": 4,
+                        "h": 2,
+                        "x": 8,
+                        "y": 7,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "lg",
+                        "w": 4,
+                        "h": 2,
+                        "x": 8,
+                        "y": 5,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    }
+                ]
+            },
+            {
+                "page": "terminal.dashboard",
+                "status": true,
+                "order": 11,
+                "module": "account_balance_chart",
+                "dimensions": [
+                    {
+                        "breakpoint": "md",
+                        "w": 6,
+                        "h": 2,
+                        "x": 0,
+                        "y": 0,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "sm",
+                        "w": 2,
+                        "h": 2,
+                        "x": 0,
+                        "y": 0,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "xs",
+                        "w": 1,
+                        "h": 2,
+                        "x": 0,
+                        "y": 0,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "lg",
+                        "w": 6,
+                        "h": 2,
+                        "x": 6,
+                        "y": 0,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    }
+                ]
+            },
+            {
+                "page": "terminal.dashboard",
+                "status": true,
+                "order": 11,
+                "module": "account_balance",
+                "dimensions": [
+                    {
+                        "breakpoint": "xs",
+                        "w": 12,
+                        "h": 4,
+                        "x": 0,
+                        "y": 7,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "md",
+                        "w": 4,
+                        "h": 4,
+                        "x": 8,
+                        "y": 0,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "lg",
+                        "w": 4,
+                        "h": 4,
+                        "x": 8,
+                        "y": 0,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    },
+                    {
+                        "breakpoint": "sm",
+                        "w": 12,
+                        "h": 4,
+                        "x": 0,
+                        "y": 7,
+                        "moved": false,
+                        "static": false,
+                        "isResizable": false
+                    }
+                ]
+            }
+        ],
+        "roles": [
+            {
+                "slug": "account-owner",
+                "computable": false,
+                "name": "Account Owner",
+                "order": 1,
+                "permissions": [
+                    "view_account"
+                ]
+            },
+            {
+                "slug": "account-member",
+                "computable": true,
+                "name": "Account Member",
+                "order": 2,
+                "permissions": [
+                    "view_account"
+                ]
+            }
+        ]
+    }
+}
+]

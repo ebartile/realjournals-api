@@ -22,17 +22,27 @@ def account_post_save(sender, instance, created, **kwargs):
     if not created:
         return
 
-    Role = apps.get_model("users", "Role")
-    owner_role = Role.objects.get(slug="account-owner")
+    template = getattr(instance, "creation_template", None)
+    if template is None:
+        AccountTemplate = apps.get_model("accounts", "AccountTemplate")
+        template = AccountTemplate.objects.get(slug=settings.DEFAULT_ACCOUNT_TEMPLATE)
 
-    logger.info(owner_role)
+    template.apply_to_account(instance)
+
+    instance.save()
+
+    AccountRole = apps.get_model("accounts", "AccountRole")
+    try:
+        owner_role = instance.roles.get(slug=template.default_owner_role)
+    except AccountRole.DoesNotExist:
+        owner_role = instance.roles.first()
 
     if owner_role:
         Membership = apps.get_model("accounts", "Membership")
-        Membership.objects.create(user=instance.owner, account=instance, role=owner_role,
-                                  is_admin=True)
+        member, created = Membership.objects.get_or_create(user=instance.owner, account=instance, role=owner_role)
+        member.is_admin=True
+        member.save()
 
-        # membership_registered.send(sender=Membership.__class__, membership=Membership)
 
 
 @receiver(post_save, sender=Membership)

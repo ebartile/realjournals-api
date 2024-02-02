@@ -1,0 +1,9 @@
+{% trans url=resolve_terminal_url("account", membership.account.slug), full_name=membership.user.get_full_name(), account=membership.account %}
+You have been added to a account
+
+Hello {{ full_name }},you have been added to this trading {{ account }}
+
+See account at {{ url }}
+
+---
+{% endtrans %}

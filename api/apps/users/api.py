@@ -7,16 +7,16 @@ from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from django.utils.translation import gettext_lazy as _
 from apps.utils.exceptions import WrongArguments, IntegrityError, NotSupported, NotAuthenticated, BadRequest, Blocked, NotFound
 from django.conf import settings
+from django.contrib.auth import logout
 from django.db.models import Q
 from .serializers import *
 from django.db import transaction as tx
 from django.contrib.auth import get_user_model
 from apps.utils.mails import mail_builder
-from .signals import user_registered as user_registered_signal
 from .serializers import UserAdminSerializer
 from rest_framework.decorators import action
 from .tokens import get_token_for_user
-from .models import User, Role
+from .models import User
 from django.apps import apps
 from apps.accounts.permissions import IsAccountAdmin, HasAccountPerm
 from . import permissions
@@ -25,11 +25,8 @@ from .services import get_user_by_email
 from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
-from .signals import user_cancel_account as user_cancel_account_signal
-from .signals import user_change_email as user_change_email_signal
-from .signals import user_verify_email as user_verify_email_signal
 from easy_thumbnails.source_generators import pil_image
-from django.contrib.auth import login, logout
+from django.contrib.auth import login, logout, authenticate
 from .tokens import get_user_for_token
 from django_otp import devices_for_user
 from django_otp.plugins.otp_totp.models import TOTPDevice
@@ -103,7 +100,6 @@ def public_register(password:str, email:str, first_name:str, last_name:str, **ar
         raise WrongArguments(_("User is already registered."))
 
     send_register_email(user)
-    user_registered_signal.send(sender=user.__class__, user=user)
     return user
 
 def get_membership_by_token(token:str):
@@ -146,7 +142,6 @@ def private_register_for_new_user(email:str, first_name:str, last_name:str, regi
         raise WrongArguments(_("User is already registered."))
 
     send_register_invite(user)
-    user_registered_signal.send(sender=user.__class__, user=user)
     return user
 
 @tx.atomic
@@ -201,9 +196,6 @@ class AuthViewSet(viewsets.ViewSet):
         data = dict(serializer.data)
         data["auth_token"] = get_token_for_user(user, "authentication")
 
-        user.backend = 'django.contrib.auth.backends.ModelBackend'
-        login(request, user)
-
         if request.GET.get('redirect', None):
             data["intended"] = request.GET.get('redirect', None)
 
@@ -225,6 +217,10 @@ class AuthViewSet(viewsets.ViewSet):
         data["auth_token"] = get_token_for_user(user, "authentication")
         return Response(data, status=status.HTTP_201_CREATED)
 
+    @action(detail=False, methods=['GET'])
+    def logout(self, request, **kwargs):
+        logout(request)
+        return Response({'message': 'Logged out successfully.'}, status=status.HTTP_200_OK)
 
     # Login view: /v1/auth
     def create(self, request, **kwargs):
@@ -254,9 +250,6 @@ class AuthViewSet(viewsets.ViewSet):
         serializer = UserAdminSerializer(user)
         data = dict(serializer.data)
         data["auth_token"] = get_token_for_user(user, "authentication")
-
-        user.backend = 'django.contrib.auth.backends.ModelBackend'
-        login(request, user)
 
         if request.GET.get('redirect', None):
             data["intended"] = request.GET.get('redirect', None)
@@ -376,7 +369,6 @@ class UsersViewSet(viewsets.ModelViewSet):
         user = self.get_object()
         stream = request.stream
         request_data = stream is not None and stream.GET or None
-        user_cancel_account_signal.send(sender=user.__class__, user=user, request_data=request_data)
         user.cancel()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -522,12 +514,6 @@ class UsersViewSet(viewsets.ModelViewSet):
         user.verified_email = True
         user.email_verified_at = timezone.now()
         user.save(update_fields=["email", "new_email", "email_token", "verified_email"])
-
-        user_change_email_signal.send(sender=user.__class__,
-                                      user=user,
-                                      old_email=old_email,
-                                      new_email=new_email)
-
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=False, methods=['POST'])
@@ -548,9 +534,6 @@ class UsersViewSet(viewsets.ModelViewSet):
         user.email_token = None
         user.verified_email = True
         user.save(update_fields=["email_token", "verified_email"])
-
-        user_verify_email_signal.send(sender=user.__class__,
-                                      user=user)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -671,56 +654,4 @@ class UsersViewSet(viewsets.ModelViewSet):
 
 
 
-######################################################
-# Role
-######################################################
-
-class RolesViewSet(viewsets.ModelViewSet):
-    queryset = Role.objects.all()
-    serializer_class = RoleSerializer
-    permission_classes = (IsAccountAdmin,)
-    filter_backends = (filters.CanViewAccountFilterBackend,)
-    filter_fields = ('account',)
-
-    def get_permissions(self):
-        if self.action == "list":
-            self.permission_classes = (AllowAny,)
-        elif self.action == "retrieve":
-            self.permission_classes = (HasAccountPerm("view_account"),)
-
-        return super().get_permissions()
-
-    def pre_conditions_blocked(self, obj):
-        if obj is not None and self.is_blocked(obj):
-            raise Blocked(_("This account is currently blocked"))
-
-    def perform_create(self, serializer):
-        obj = serializer.save()
-        self.pre_conditions_blocked(obj)
-
-    def perform_update(self, serializer):
-        obj = serializer.save()
-        self.pre_conditions_blocked(obj)
-
-    def is_blocked(self, obj):
-        return obj.account is not None and obj.account.blocked_code is not None
-
-    def pre_delete(self, obj):
-        move_to = self.request.query_params.get('moveTo', None)
-        if move_to:
-            membership_model = apps.get_model("accounts", "Membership")
-            role_dest = get_object_or_404(self.model, account=obj.account, id=move_to)
-            qs = membership_model.objects.filter(account_id=obj.account.pk, role=obj)
-            qs.update(role=role_dest)
-
-        super().pre_delete(obj)
-
-    def perform_destroy(self, instance):
-        try:
-            self.pre_conditions_blocked(instance)
-            self.pre_delete(instance)
-            instance.delete()
-        except Blocked as e:
-            raise Blocked({"detail": str(e)})
-        return Response(status=status.HTTP_204_NO_CONTENT)
 

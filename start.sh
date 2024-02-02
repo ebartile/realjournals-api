@@ -38,7 +38,7 @@ set -euo pipefail
 # fi
 
 # Define the list of users
-users=("realjournals")
+users=("kasm-user")
 
 # Iterate over the list of users
 for user in "${users[@]}"; do
@@ -68,7 +68,7 @@ setup_script="$script_directory/setup.sh"
 
 # Check if setup.sh exists
 if [ -f "$setup_script" ]; then
-  sudo -u realjournals bash -c "cd '$script_directory' && ./setup.sh $*"
+  sudo -u kasm-user bash -c "cd '$script_directory' && ./setup.sh $*"
 else
   echo "setup.sh not found in the same directory as this script."
 fi

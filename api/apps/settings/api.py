@@ -25,7 +25,7 @@ class TerminalPageViewSet(ReadOnlyModelViewSet):
 
     def get_queryset(self):
         qs = super().get_queryset()
-        return qs.filter(account=self.kwargs['id'])
+        return qs.filter(account=self.kwargs['id'], status=True)
 
     def get_serializer(self, *args, **kwargs):
         if self.action == 'create':
@@ -41,13 +41,7 @@ class TerminalPageViewSet(ReadOnlyModelViewSet):
             account = get_object_or_404(Account, id=self.kwargs['id'])
             order = 0
             for module_name, module_dimensions in dimensions_data.items():
-                print(module_name)
-                try:
-                    terminal_module = models.TerminalModule.objects.get(name=module_name)  
-                except ObjectDoesNotExist:
-                    raise serializers.ValidationError(f"TerminalModule with name '{module_name}' does not exist.")
-
-                terminal_page_module, created = models.TerminalPageModule.objects.update_or_create(account=account, page=page, module=terminal_module)
+                terminal_page_module, created = models.TerminalPageModule.objects.update_or_create(account=account, page=page, module=module_name)
                 terminal_page_module.order = order
                 terminal_page_module.save()
                 order = order + 1
@@ -80,7 +74,7 @@ class AdminPageViewSet(ReadOnlyModelViewSet):
 
     def get_queryset(self):
         qs = super().get_queryset()
-        return qs.filter(user=self.kwargs['id'])
+        return qs.filter(user=self.kwargs['id'], status=True)
 
     def get_serializer(self, *args, **kwargs):
         if self.action == 'create':
@@ -95,13 +89,7 @@ class AdminPageViewSet(ReadOnlyModelViewSet):
             dimensions_data = serializer.data.get('dimensions', {})
             order = 0
             for module_name, module_dimensions in dimensions_data.items():
-                print(module_name)
-                try:
-                    admin_module = models.AdminModule.objects.get(name=module_name)  
-                except ObjectDoesNotExist:
-                    raise serializers.ValidationError(f"AdminModule with name '{module_name}' does not exist.")
-
-                admin_page_module, created = models.AdminPageModule.objects.update_or_create(user=request.user, page=page, module=admin_module)
+                admin_page_module, created = models.AdminPageModule.objects.update_or_create(user=request.user, page=page, module=module_name)
                 admin_page_module.order = order
                 admin_page_module.save()
                 order = order + 1

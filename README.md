@@ -1,4 +1,4 @@
-## Real Journals Backend
+## Real Journals MetaTrader5 Api
 
 ## Bug reports
 

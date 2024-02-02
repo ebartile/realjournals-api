@@ -4,7 +4,10 @@ import socket
 from urllib.parse import urlparse
 
 urls = {
-    "landing" : {
+    "admin": {
+        "home": "/",
+    },
+    "terminal": {
         "home": "/",
         "pricing": "/pricing",
         "features": "/features",
@@ -13,9 +16,15 @@ urls = {
         "faq": "/faq",
         "privacy-policy": "/privacy-policy",
         "terms-of-use": "/terms-of-use",
-    },
-    "account": {
-        "home": "/",
+
+        "new-account": "/account/new",
+        "new-account-import": "/account/new/import/{0}",
+        "settings-mail-notifications": "/user-settings/mail-notifications",
+        "account": "/account/{0}", # account.slug
+        "team": "/account/{0}/team/", # account.slug
+        "account-admin": "/login?next=/account/{0}/admin/account-profile/details", # account.slug
+
+
         "login": "/login",
         "register": "/register",
         "forgot-password": "/forgot-password",
@@ -24,20 +33,8 @@ urls = {
         "change-email": "/change-email/{0}", # user.email_token
         "cancel-account": "/cancel-account/{0}", # auth.token.get_token_for_user(user)
         "invitation": "/invitation/{0}", # membership.token
+
         "user": "/profile/{0}", # user.username
-    },
-    "admin": {
-        "home": "/",
-    },
-    "terminal": {
-        "home": "/",
-        "new-account": "/account/new",
-        "new-account-import": "/account/new/import/{0}",
-        "settings-mail-notifications": "/user-settings/mail-notifications",
-        "account": "/account/{0}", # account.slug
-        "journal": "/account/{0}/issues", # account.slug
-        "team": "/account/{0}/team/", # account.slug
-        "account-admin": "/login?next=/account/{0}/admin/account-profile/details", # account.slug
     }
 }
 

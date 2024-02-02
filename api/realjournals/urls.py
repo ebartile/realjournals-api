@@ -3,15 +3,13 @@ from django.urls import path, re_path
 from django.conf import settings
 from django.conf.urls import include
 from django.views.decorators.cache import never_cache
-from apps.utils.api import MyJavaScriptView
 from .routers import router
 
 urlpatterns = [
-    path('social-auth/', include('social_django.urls', namespace='social')),
-    path('api-auth/', include('rest_framework.urls')),
     path('v1/', include(router.urls)),
+    path('v1/api-auth/', include('drf_social_oauth2.urls',namespace='drf')),
     path('admin/', admin.site.urls),
-    path('myjs/', MyJavaScriptView.as_view()),
+    path('api-auth/', include('rest_framework.urls'))
 ]
 
 

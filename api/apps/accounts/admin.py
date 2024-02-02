@@ -1,11 +1,20 @@
 from django.contrib import admin
-from .models import Account, Membership, Broker
-from apps.users.models import Role
+from .models import Account, Membership, Broker, AccountTemplate, AccountRole, AccountRole
 from apps.notifications.admin import NotifyPolicyInline
 from django.utils.translation import gettext_lazy as _
 from django.db import transaction
 from django.utils.html import format_html
 from django.urls import reverse
+from django.contrib import admin
+
+@admin.register(AccountRole)
+class AccountRoleAdmin(admin.ModelAdmin):
+    list_display = ('name', 'slug', 'order', 'computable')
+
+class AccountTemplateAdmin(admin.ModelAdmin):
+    list_display = ('name', 'created_date', 'modified_date', 'default_owner_role')
+    search_fields = ('name', 'default_owner_role')
+    list_filter = ('created_date', 'modified_date')
 
 class MembershipAdmin(admin.ModelAdmin):
     list_display = ['account', 'user']
@@ -14,10 +23,6 @@ class MembershipAdmin(admin.ModelAdmin):
 
     def has_add_permission(self, request):
         return False
-
-    def get_object(self, *args, **kwargs):
-        self.obj = super().get_object(*args, **kwargs)
-        return self.obj
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name in ["user", "invited_by"] and getattr(self, 'obj', None):
@@ -52,11 +57,11 @@ class MembershipInline(admin.TabularInline):
 
 
 class RoleInline(admin.TabularInline):
-    model = Role
+    model = AccountRole
     extra = 0
 
 class AccountAdmin(admin.ModelAdmin):
-    list_display = ["id", "name", "has_be_configured", "slug", "is_private","owner_url",
+    list_display = ["id", "name", 'username', 'server', "account_type", "has_be_configured", "slug", "is_private","owner_url",
                     "blocked_code", "is_featured", "created_date"]
     list_display_links = ["id", "name", "slug"]
     list_filter = ("is_private", "blocked_code", "is_featured", "created_date")
@@ -68,13 +73,23 @@ class AccountAdmin(admin.ModelAdmin):
 
     fieldsets = (
         (None, {
-            "fields": ("name",
-                       "slug",
-                       "is_featured",
-                       "has_be_configured",
-                       "description",
-                       "logo",
-                       ("created_date",))
+            "fields": (
+                "name",
+                "slug",
+                "is_featured",
+                "has_be_configured",
+                "account_type",
+                "username",
+                "server",
+                "password",
+                "description",
+                "logo",
+                "created_date",
+                "last_order_end_date",
+                "last_deal_end_date",
+                "broker",  # Add broker field
+                "timezone",  # Add timezone field
+            )
         }),
         (_("Privacy"), {
             "fields": (("owner", "blocked_code"),
@@ -93,9 +108,6 @@ class AccountAdmin(admin.ModelAdmin):
         return ""
     owner_url.short_description = _('owner')
 
-    def get_object(self, *args, **kwargs):
-        self.obj = super().get_object(*args, **kwargs)
-        return self.obj
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if (db_field.name in ["owner"] and getattr(self, 'obj', None)):
@@ -112,6 +124,7 @@ class AccountAdmin(admin.ModelAdmin):
     actions = [
         "make_public",
         "make_private",
+        "make_configured",
     ]
 
     @transaction.atomic
@@ -142,6 +155,18 @@ class AccountAdmin(admin.ModelAdmin):
 
         self.message_user(request, _("{count} successfully made private.").format(count=total_updates))
     make_private.short_description = _("Make private")
+
+    @transaction.atomic
+    def make_configured(self, request, queryset):
+        total_updates = 0
+
+        for account in queryset:
+            account.has_be_configured = True
+            account.save()
+            total_updates += 1
+
+        self.message_user(request, _("{count} successfully made configured.").format(count=total_updates))
+    make_configured.short_description = _("Make Configured")
 
     def delete_queryset(self, request, queryset):
         # NOTE: Override delete_queryset so its use the same approach used in
@@ -174,4 +199,4 @@ class BrokerAdmin(admin.ModelAdmin):
 admin.site.register(Broker, BrokerAdmin)
 admin.site.register(Account, AccountAdmin)
 admin.site.register(Membership, MembershipAdmin)
-
+admin.site.register(AccountTemplate, AccountTemplateAdmin)

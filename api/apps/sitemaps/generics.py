@@ -2,7 +2,7 @@
 from django.db.models import Q
 from django.apps import apps
 
-from apps.users.templatetags.functions import resolve_landing
+from apps.users.templatetags.functions import resolve_terminal
 
 from .base import Sitemap
 
@@ -18,7 +18,7 @@ class GenericSitemap(Sitemap):
         ]
 
     def location(self, obj):
-        return resolve_landing(obj["url_key"])
+        return resolve_terminal(obj["url_key"])
 
     def changefreq(self, obj):
         return obj.get("changefreq", None)

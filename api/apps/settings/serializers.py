@@ -96,7 +96,6 @@ class AdminPageEditSerializer(serializers.ModelSerializer):
 class TerminalPageModuleSerializer(serializers.ModelSerializer):
     dimensions = serializers.SerializerMethodField()
     name = serializers.SerializerMethodField()
-    status = serializers.SerializerMethodField()
 
     class Meta:
         model = TerminalPageModule
@@ -106,17 +105,11 @@ class TerminalPageModuleSerializer(serializers.ModelSerializer):
         return TerminalDimensionsSerializer(obj.dimensions, many=True).data
 
     def get_name(self, obj):
-        return obj.module.name
-
-    def get_status(self, obj):
-        if not obj.module.is_active:
-            return obj.module.is_active
-        return obj.status
+        return obj.module
 
 class AdminPageModuleSerializer(serializers.ModelSerializer):
     dimensions = serializers.SerializerMethodField()
     name = serializers.SerializerMethodField()
-    status = serializers.SerializerMethodField()
 
     class Meta:
         model = AdminPageModule
@@ -126,9 +119,4 @@ class AdminPageModuleSerializer(serializers.ModelSerializer):
         return AdminDimensionsSerializer(obj.dimensions, many=True).data
 
     def get_name(self, obj):
-        return obj.module.name
-
-    def get_status(self, obj):
-        if not obj.module.is_active:
-            return obj.module.is_active
-        return obj.status
+        return obj.module

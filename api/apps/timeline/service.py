@@ -143,7 +143,6 @@ def filter_timeline_for_user(timeline, user):
     # Filtering private account with some public parts
     content_types = {
         "view_account": ContentType.objects.get_by_natural_key("accounts", "account"),
-        "view_journal": ContentType.objects.get_by_natural_key("journals", "journal")
     }
 
     for content_type_key, content_type in content_types.items():
@@ -225,14 +224,6 @@ def extract_account_info(instance):
 def extract_user_info(instance):
     return {
         "id": instance.pk
-    }
-
-
-def extract_journal_info(instance):
-    return {
-        "id": instance.pk,
-        "ref": instance.ref,
-        "subject": instance.subject,
     }
 
 

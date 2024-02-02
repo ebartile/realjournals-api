@@ -19,11 +19,11 @@ def attach_members(queryset, as_field="members_attr"):
                                concat(first_name, last_name) complete_user_name,
                                users_user.photo,
                                users_user.is_active,
-                               users_role.id "role",
-                               users_role.name role_name
+                               accounts_accountrole.id "role",
+                               accounts_accountrole.name role_name
                           from accounts_membership
                      LEFT JOIN users_user ON accounts_membership.user_id = users_user.id
-                     LEFT JOIN users_role ON users_role.id = accounts_membership.role_id
+                     LEFT JOIN accounts_accountrole ON accounts_accountrole.id = accounts_membership.role_id
                          WHERE accounts_membership.account_id = {tbl}.id
                       ORDER BY complete_user_name
                     ) t
@@ -66,10 +66,10 @@ def attach_my_role_permissions(queryset, user, as_field="my_role_permissions_att
         sql = "SELECT '{}'"
     else:
         sql = """
-                 SELECT users_role.permissions
+                 SELECT accounts_accountrole.permissions
                    from accounts_membership
               LEFT JOIN users_user ON accounts_membership.user_id = users_user.id
-              LEFT JOIN users_role ON users_role.id = accounts_membership.role_id
+              LEFT JOIN accounts_accountrole ON accounts_accountrole.id = accounts_membership.role_id
                   WHERE accounts_membership.account_id = {tbl}.id AND
                         users_user.id = {user_id}"""
 
@@ -139,33 +139,11 @@ def attach_roles(queryset, as_field="roles_attr"):
     model = queryset.model
     sql = """
              SELECT json_agg(
-                        row_to_json(users_role)
-                        ORDER BY users_role.order
+                        row_to_json(accounts_accountrole)
+                        ORDER BY accounts_accountrole.order
                     )
-               from users_role
-              WHERE users_role.account_id = {tbl}.id
-          """
-
-    sql = sql.format(tbl=model._meta.db_table)
-    queryset = queryset.extra(select={as_field: sql})
-    return queryset
-
-def attach_journal_custom_attributes(queryset, as_field="journal_custom_attributes_attr"):
-    """Attach a json journal custom attributes representation to each object of the queryset.
-
-    :param queryset: A Django projects queryset object.
-    :param as_field: Attach the journal custom attributes as an attribute with this name.
-
-    :return: Queryset object with the additional `as_field` field.
-    """
-    model = queryset.model
-    sql = """
-             SELECT json_agg(
-                        row_to_json(journals_journalcustomattribute)
-                        ORDER BY journals_journalcustomattribute.order
-                    )
-               from journals_journalcustomattribute
-              WHERE journals_journalcustomattribute.account_id = {tbl}.id
+               from accounts_accountrole
+              WHERE accounts_accountrole.account_id = {tbl}.id
           """
 
     sql = sql.format(tbl=model._meta.db_table)
@@ -179,7 +157,6 @@ def attach_extra_info(queryset, user=None):
     queryset = attach_my_role_permissions(queryset, user)
     queryset = attach_private_accounts_same_owner(queryset, user)
     queryset = attach_public_accounts_same_owner(queryset, user)
-    queryset = attach_journal_custom_attributes(queryset)
     queryset = attach_is_fan(queryset, user)
 
     return queryset

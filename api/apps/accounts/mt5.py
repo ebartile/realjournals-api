@@ -276,6 +276,18 @@ class TradeAction(models.IntegerChoices):
     CLOSE_BY = TRADE_ACTION_CLOSE_BY
 
 
+class OrderState(models.IntegerChoices):
+    STARTED = (0, 'Checked, but not yet accepted by broker')
+    PLACED = (1, 'Accepted')
+    CANCELED = (2, 'Canceled by client')
+    PARTIAL = (3, 'Partially executed')
+    FILLED = (4, 'Fully executed')
+    REJECTED = (5, 'Rejected')
+    EXPIRED = (6, 'Expired')
+    REQUEST_ADD = (7, 'Is being registered')
+    REQUEST_MODIFY = (8, 'Is being modified')
+    REQUEST_CANCEL = (9, 'Is being deleted')
+
 class OrderFilling(models.IntegerChoices):
     """ORDER_TYPE_FILLING Enum.
     
@@ -299,7 +311,6 @@ class OrderFilling(models.IntegerChoices):
     IOC = ORDER_FILLING_IOC
     RETURN = ORDER_FILLING_RETURN
 
-
 class OrderTime(models.IntegerChoices):
     """ORDER_TIME Enum.
     
@@ -310,11 +321,13 @@ class OrderTime(models.IntegerChoices):
         SPECIFIED_DAY (int): The order is active until 23:59:59 of the specified day. If this time appears to be out of
             a trading session, the expiration is processed at the nearest trading time.
     """
-    GTC = ORDER_TIME_GTC
-    DAY = ORDER_TIME_DAY
-    SPECIFIED = ORDER_TIME_SPECIFIED
-    SPECIFIED_DAY = ORDER_TIME_SPECIFIED_DAY
-
+    GTC = (ORDER_TIME_GTC, 'Good till cancel order')
+    DAY = (ORDER_TIME_DAY, 'Good till current trade day order')
+    SPECIFIED = (ORDER_TIME_SPECIFIED, 'Order active until specified date')
+    SPECIFIED_DAY = (
+        ORDER_TIME_SPECIFIED_DAY,
+        'Order active until 23:59:59 of the specified day. If this time is outside of a trading session, expiration is processed at the nearest trading time.'
+    )
 
 class OrderType(models.IntegerChoices):
     """ORDER_TYPE Enum.
@@ -483,10 +496,10 @@ class PositionReason(models.IntegerChoices):
        EXPERT (int): The position was opened as a result of activation of an order placed from an MQL5 program,
            i.e. an Expert Advisor or a script
     """
-    CLIENT = POSITION_REASON_CLIENT
-    MOBILE = POSITION_REASON_MOBILE
-    WEB = POSITION_REASON_WEB
-    EXPERT = POSITION_REASON_EXPERT
+    CLIENT = (DEAL_REASON_CLIENT, 'Desktop')
+    MOBILE = (DEAL_REASON_MOBILE, 'Mobile')
+    WEB = (DEAL_REASON_WEB, 'Web')
+    EXPERT = (DEAL_REASON_EXPERT, 'MQL5 program')
 
 
 class DealType(models.IntegerChoices):
@@ -582,16 +595,16 @@ class DealReason(models.IntegerChoices):
         SPLIT (int): The deal was executed after the split (price reduction) of an instrument, which had an open
             position during split announcement
     """
-    CLIENT = DEAL_REASON_CLIENT
-    MOBILE = DEAL_REASON_MOBILE
-    WEB = DEAL_REASON_WEB
-    EXPERT = DEAL_REASON_EXPERT
-    SL = DEAL_REASON_SL
-    TP = DEAL_REASON_TP
-    SO = DEAL_REASON_SO
-    ROLLOVER = DEAL_REASON_ROLLOVER
-    VMARGIN = DEAL_REASON_VMARGIN
-    SPLIT = DEAL_REASON_SPLIT
+    CLIENT = (DEAL_REASON_CLIENT, 'Desktop')
+    MOBILE = (DEAL_REASON_MOBILE, 'Mobile')
+    WEB = (DEAL_REASON_WEB, 'Web')
+    EXPERT = (DEAL_REASON_EXPERT, 'MQL5 program')
+    SL = (DEAL_REASON_SL, 'Stop Loss activation')
+    TP = (DEAL_REASON_TP, 'Take Profit activation')
+    SO = (DEAL_REASON_SO, 'Stop Out event')
+    ROLLOVER = (DEAL_REASON_ROLLOVER, 'Rollover')
+    VMARGIN = (DEAL_REASON_VMARGIN, 'Variation margin')
+    SPLIT = (DEAL_REASON_SPLIT, 'Instrument split')
 
 
 class OrderReason(models.IntegerChoices):
@@ -606,14 +619,13 @@ class OrderReason(models.IntegerChoices):
         TP (int): The order was placed as a result of Take Profit activation
         SO (int): The order was placed as a result of the Stop Out event
     """
-    CLIENT = ORDER_REASON_CLIENT
-    MOBILE = ORDER_REASON_MOBILE
-    WEB = ORDER_REASON_WEB
-    EXPERT = ORDER_REASON_EXPERT
-    SL = ORDER_REASON_SL
-    TP = ORDER_REASON_TP
-    SO = ORDER_REASON_SO
-
+    CLIENT = (ORDER_REASON_CLIENT, 'Desktop')
+    MOBILE = (ORDER_REASON_MOBILE, 'Mobile')
+    WEB = (ORDER_REASON_WEB, 'Web')
+    EXPERT = (ORDER_REASON_EXPERT, 'MQL5 program')
+    SL = (ORDER_REASON_SL, 'Stop Loss activation')
+    TP = (ORDER_REASON_TP, 'Take Profit activation')
+    SO = (ORDER_REASON_SO, 'Stop Out event')
 
 class SymbolChartMode(models.IntegerChoices):
     """SYMBOL_CHART_MODE Enum. A symbol price chart can be based on Bid or Last prices. The price selected for symbol
@@ -1329,7 +1341,6 @@ class BookInfo:
     volume: float
     volume_dbl: float
 
-
 class TradeOrder:
     """Trade Order Class.
 
@@ -1343,7 +1354,7 @@ class TradeOrder:
         type: OrderType
         type_time: OrderTime
         type_filling: OrderFilling
-        state: int
+        state: OrderState
         magic: int
         position_id: int
         position_by_id: int
@@ -1599,4 +1610,3 @@ class Tick:
     time_msc:float
     flags: float
     volume_real:float
-    Index: int
